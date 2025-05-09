@@ -1,0 +1,90 @@
+[
+  {
+    "Strategy": "1\nUSDC.E \u279e WETH \u279e\n1\n|\nAAVE V3\n->\nAura",
+    "Strategy APY": "39.56%",
+    "Delta": "37.12%",
+    "Available": "75%",
+    "Farm TVL": "$3.78m",
+    "LTV": "$60,299"
+  },
+  {
+    "Strategy": "2\nUSDC.E \u279e GNO \u279e\n2\n|\nAAVE V3\n->\nAura",
+    "Strategy APY": "38.71%",
+    "Delta": "36.28%",
+    "Available": "75%",
+    "Farm TVL": "$9.78m",
+    "LTV": "$60,299"
+  },
+  {
+    "Strategy": "3\nUSDC.E \u279e EURE \u279e\n3\n|\nAAVE V3\n->\nAura",
+    "Strategy APY": "37.53%",
+    "Delta": "35.09%",
+    "Available": "75%",
+    "Farm TVL": "$2.81m",
+    "LTV": "$60,299"
+  },
+  {
+    "Strategy": "4\nUSDC.E \u279e WXDAI \u279e\n4\n|\nAAVE V3\n->\nAura",
+    "Strategy APY": "37.24%",
+    "Delta": "34.80%",
+    "Available": "75%",
+    "Farm TVL": "$1.52m",
+    "LTV": "$60,299"
+  },
+  {
+    "Strategy": "5\nUSDC \u279e WETH \u279e\n5\n|\nAAVE V3\n->\nAura",
+    "Strategy APY": "35.49%",
+    "Delta": "32.17%",
+    "Available": "65%",
+    "Farm TVL": "$3.78m",
+    "LTV": "$60,299"
+  },
+  {
+    "Strategy": "6\nUSDC.E \u279e USDC \u279e\n6\n|\nAAVE V3\n->\nAura",
+    "Strategy APY": "34.81%",
+    "Delta": "32.37%",
+    "Available": "75%",
+    "Farm TVL": "$349,494",
+    "LTV": "$60,299"
+  },
+  {
+    "Strategy": "7\nUSDC \u279e GNO \u279e\n7\n|\nAAVE V3\n->\nAura",
+    "Strategy APY": "34.75%",
+    "Delta": "31.44%",
+    "Available": "65%",
+    "Farm TVL": "$9.78m",
+    "LTV": "$60,299"
+  },
+  {
+    "Strategy": "8\nUSDC \u279e USDC.E \u279e\n8\n|\nAAVE V3\n->\nAura",
+    "Strategy APY": "33.81%",
+    "Delta": "30.50%",
+    "Available": "65%",
+    "Farm TVL": "$2.66m",
+    "LTV": "$60,299"
+  },
+  {
+    "Strategy": "9\nUSDC \u279e EURE \u279e\n9\n|\nAAVE V3\n->\nAura",
+    "Strategy APY": "33.72%",
+    "Delta": "30.41%",
+    "Available": "65%",
+    "Farm TVL": "$2.81m",
+    "LTV": "$60,299"
+  },
+  {
+    "Strategy": "10\nUSDC \u279e WXDAI \u279e\n10\n|\nAAVE V3\n->\nAura",
+    "Strategy APY": "33.47%",
+    "Delta": "30.16%",
+    "Available": "65%",
+    "Farm TVL": "$1.52m",
+    "LTV": "$60,299"
+  },
+  {
+    "Strategy": "11\nUSDC.E \u279e WETH \u279e\n11\n|\nAAVE V3\n->\nAura",
+    "Strategy APY": "11.63%",
+    "Delta": "9.20%",
+    "Available": "75%",
+    "Farm TVL": "$3.78m",
+    "LTV": "$71,714"
+  }
+]
