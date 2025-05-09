@@ -3,6 +3,8 @@ import ollama from "ollama";
 import {
   getGnosisYield,
   getGnosisYieldTool,
+  checkSafeBalancesTool,
+  checkSafeBalances,
 } from "@/lib/yield_strategist/ollama/tools";
 
 const model = "0xroyce/Plutus-3B";
@@ -10,17 +12,20 @@ const model = "0xroyce/Plutus-3B";
 
 const availableFunctions = {
   getGnosisYield: getGnosisYield,
+  checkSafeBalances: checkSafeBalances,
 };
 
-const availableTools = [getGnosisYieldTool];
+const availableTools = [getGnosisYieldTool, checkSafeBalancesTool];
 
 // todo: maybe impl ollamaChatWithTools
 
 export async function ollamaChat(messages) {
+  console.log("args:", messages);
   const response = await ollama.chat({
     model: model,
     messages: messages,
     tools: availableTools,
+    // stream: true,
   });
 
   let output;
@@ -33,7 +38,7 @@ export async function ollamaChat(messages) {
       if (functionToCall) {
         console.log("Calling function:", tool.function.name);
         console.log("Arguments:", tool.function.arguments);
-        output = functionToCall(tool.function.arguments);
+        output = await functionToCall(tool.function.arguments);
         console.log("Function output:", output);
 
         // Add the function response to messages for the model to use
