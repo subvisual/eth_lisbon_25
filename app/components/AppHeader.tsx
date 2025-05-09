@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import type React from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Layout, Menu, theme as antdTheme } from 'antd';
@@ -24,6 +25,7 @@ export default function AppHeader() {
 
   const menuItems = [
     { label: <Link href="/" style={navLinkStyle}>Home</Link>, key: 'home' },
+    { label: <Link href="/aave" style={navLinkStyle}>Aave</Link>, key: 'aave' },
     { label: <Link href="/deploy-token" style={navLinkStyle}>Token Deployment</Link>, key: 'token' },
     { label: <Link href="/shutter-rps" style={navLinkStyle}>Shutter</Link>, key: 'rps' },
     {
