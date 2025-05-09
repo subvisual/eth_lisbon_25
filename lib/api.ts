@@ -1,3 +1,4 @@
+import { apiKit } from "./apiKit";
 
 interface ShutterApiMessageData {
     eon: number;
@@ -107,5 +108,10 @@ export async function fetchDecryptionKey(identity: string): Promise<ShutterDecry
     }
 
     return jsonResponse.message;
+}
+
+export async function getSafesByOwner(ownerAddress: string) {
+    const decodedData = await apiKit.getSafesByOwner(ownerAddress);
+    return decodedData;
 }
 
