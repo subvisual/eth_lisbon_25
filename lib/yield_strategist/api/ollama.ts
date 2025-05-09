@@ -1,31 +1,16 @@
-import ollama from "ollama";
+import ollama, { Message } from "ollama";
 
-import {
-  getGnosisYield,
-  getGnosisYieldTool,
-  checkSafeBalancesTool,
-  checkSafeBalances,
-} from "@/lib/yield_strategist/ollama/tools";
+import { toolbelt } from "@/lib/yield_strategist/ollama/tools";
 
 const model = "0xroyce/Plutus-3B";
 // const model = "qwen3:8b";
 
-const availableFunctions = {
-  getGnosisYield: getGnosisYield,
-  checkSafeBalances: checkSafeBalances,
-};
-
-const availableTools = [getGnosisYieldTool, checkSafeBalancesTool];
-
 // todo: maybe impl ollamaChatWithTools
-
-export async function ollamaChat(messages) {
-  console.log("args:", messages);
+export async function ollamaChat(messages: Message[]) {
   const response = await ollama.chat({
     model: model,
     messages: messages,
-    tools: availableTools,
-    // stream: true,
+    tools: toolbelt.tools,
   });
 
   let output;
@@ -34,7 +19,7 @@ export async function ollamaChat(messages) {
   if (response.message.tool_calls) {
     // Process tool calls from the response
     for (const tool of response.message.tool_calls) {
-      const functionToCall = availableFunctions[tool.function.name];
+      const functionToCall = toolbelt.functions[tool.function.name];
       if (functionToCall) {
         console.log("Calling function:", tool.function.name);
         console.log("Arguments:", tool.function.arguments);
@@ -42,17 +27,18 @@ export async function ollamaChat(messages) {
         console.log("Function output:", output);
 
         // Add the function response to messages for the model to use
-        console.log(response);
         messages.push(response.message);
         messages.push({
           role: "tool",
-          content: output.toString(),
+          content: JSON.stringify(output, null, 2),
         });
       } else {
         console.log("Function", tool.function.name, "not found");
       }
     }
 
+    // final response takes into account tool output
+    // and model reasoning with it
     finalResponse = await ollama.chat({
       model: model,
       messages: messages,
