@@ -24,16 +24,15 @@ export default function Aave() {
 
   const [form] = Form.useForm();
 
-  if (!primaryWallet || !isEthereumWallet(primaryWallet)) return null;
+  const onSubmit = async (values: any) => {
+    if (!primaryWallet || !isEthereumWallet(primaryWallet)) return;
 
-  const onFinish = async (values: any) => {
-    const publicClient = await primaryWallet.getPublicClient();
     const walletClient = await primaryWallet.getWalletClient();
 
     const contract = getContract({
       address: "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
       abi: aavePoolV3Abi,
-      client: publicClient,
+      client: walletClient,
     });
 
     const result = await contract.read.getReservesList();
@@ -75,7 +74,7 @@ export default function Aave() {
           <Form
             layout="vertical"
             form={form}
-            onFinish={onFinish}
+            onFinish={onSubmit}
             initialValues={{
               lendAmount: 0,
               borrowAmount: 0,
