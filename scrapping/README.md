@@ -1,4 +1,4 @@
-# Scrapper
+# Scraper
 
 To run this you will need `uv`
 
