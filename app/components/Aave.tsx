@@ -18,6 +18,7 @@ import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { isEthereumWallet } from "@dynamic-labs/ethereum";
 import { getContract } from "viem";
 import { aavePoolV3Abi } from "../constants/abi/aavePoolV3";
+import { erc20Abi } from "../constants/abi/erc20";
 
 export default function Aave() {
   const { primaryWallet } = useDynamicContext();
@@ -29,15 +30,38 @@ export default function Aave() {
 
     const walletClient = await primaryWallet.getWalletClient();
 
-    const contract = getContract({
+    const pool = getContract({
       address: "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
       abi: aavePoolV3Abi,
       client: walletClient,
     });
 
-    const result = await contract.read.getReservesList();
+    const reserveAddresses = await pool.read.getReservesList();
 
-    console.log(result);
+    const reserves = await Promise.all(
+      reserveAddresses.map(async (tokenAddress) => {
+        try {
+          const tokenContract = getContract({
+            address: tokenAddress,
+            abi: erc20Abi,
+            client: walletClient,
+          });
+
+          const symbol = await tokenContract.read.symbol();
+
+          return {
+            tokenAddress,
+            symbol,
+            reserveData: await pool.read.getReserveData([tokenAddress]),
+          };
+        } catch (err) {
+          console.error(`Error loading data for ${tokenAddress}`, err);
+          return null;
+        }
+      })
+    );
+
+    console.log(reserves);
   };
 
   return (
