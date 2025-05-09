@@ -13,6 +13,7 @@
     "@dynamic-labs/ethereum": "*",
     "@dynamic-labs/ethers-v6": "*",
     "@dynamic-labs/sdk-react-core": "*",
+    "@safe-global/api-kit": "^3.0.1",
     "@shutter-network/shutter-sdk": "^0.0.1",
     "antd": "^5.24.7",
     "encoding": "^0.1.13",
