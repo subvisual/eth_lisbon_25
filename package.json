@@ -10,15 +10,18 @@
     "postinstall": "mkdir -p public/node_modules/@shutter-network/shutter-sdk/dist && cp node_modules/@shutter-network/shutter-sdk/dist/blst.* public/node_modules/@shutter-network/shutter-sdk/dist/"
   },
   "dependencies": {
+    "@ai-sdk/react": "^1.2.12",
     "@dynamic-labs/ethereum": "*",
     "@dynamic-labs/ethers-v6": "*",
     "@dynamic-labs/sdk-react-core": "*",
     "@safe-global/api-kit": "^3.0.1",
     "@shutter-network/shutter-sdk": "^0.0.1",
+    "ai": "^4.3.15",
     "antd": "^5.24.7",
     "encoding": "^0.1.13",
     "next": "13.5.11",
     "ollama": "^0.5.15",
+    "ollama-ai-provider": "^1.2.0",
     "pino-pretty": "^13.0.0",
     "react": "^18",
     "react-dom": "^18",
