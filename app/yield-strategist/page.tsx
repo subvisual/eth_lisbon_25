@@ -1,16 +1,7 @@
 import React from "react";
 
-import ollama from "ollama";
+import { mockGnosisYield } from "@/lib/yield_strategist/api/defillama";
 
-import {
-  fetchGnosisYieldData,
-  mockGnosisYield,
-} from "@/lib/yield_strategist/api/defillama";
-import {
-  getGnosisYield,
-  getGnosisYieldTool,
-  getJsonFieldTool,
-} from "@/lib/yield_strategist/ollama/tools";
 import { ollamaChat } from "@/lib/yield_strategist/api/ollama";
 // Using the async keyword correctly for a Next.js page component
 export default async function YieldStrategistPage() {

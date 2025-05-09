@@ -1,70 +1,60 @@
 import ollama from "ollama";
 
-
 import {
-    getGnosisYield,
-    getGnosisYieldTool,
-    getJsonFieldTool,
-  } from "@/lib/yield_strategist/ollama/tools";
+  getGnosisYield,
+  getGnosisYieldTool,
+} from "@/lib/yield_strategist/ollama/tools";
 
-  const model = "qwen3:8b"
+const model = "qwen3:8b";
 
-  const availableFunctions = {
-    getGnosisYield: getGnosisYield,
-  };
+const availableFunctions = {
+  getGnosisYield: getGnosisYield,
+};
 
-  const availableTools = [getGnosisYieldTool]
-    
-  
-// todo: maybe impl ollamaChatWithTools 
+const availableTools = [getGnosisYieldTool];
 
-  export async function ollamaChat(messages) {
-    
-    const response = await ollama.chat(
-        {
-            model: model,
-            messages: messages,
-            tools: availableTools
-        }
-    )
+// todo: maybe impl ollamaChatWithTools
 
-    let output
-    let finalResponse
+export async function ollamaChat(messages) {
+  const response = await ollama.chat({
+    model: model,
+    messages: messages,
+    tools: availableTools,
+  });
 
-    if (response.message.tool_calls) {
-        // Process tool calls from the response
-        for (const tool of response.message.tool_calls) {
-        const functionToCall = availableFunctions[tool.function.name];
-        if (functionToCall) {
-            console.log("Calling function:", tool.function.name);
-            console.log("Arguments:", tool.function.arguments);
-            output = functionToCall(tool.function.arguments);
-            console.log("Function output:", output);
+  let output;
+  let finalResponse;
 
-            // Add the function response to messages for the model to use
-            console.log(response);
-            messages.push(response.message);
-            messages.push({
-            role: "tool",
-            content: output.toString(),
-            });
-        } else {
-            console.log("Function", tool.function.name, "not found");
-        }
-        }
+  if (response.message.tool_calls) {
+    // Process tool calls from the response
+    for (const tool of response.message.tool_calls) {
+      const functionToCall = availableFunctions[tool.function.name];
+      if (functionToCall) {
+        console.log("Calling function:", tool.function.name);
+        console.log("Arguments:", tool.function.arguments);
+        output = functionToCall(tool.function.arguments);
+        console.log("Function output:", output);
 
-        finalResponse = await ollama.chat({
-        model: model,
-        messages: messages,
+        // Add the function response to messages for the model to use
+        console.log(response);
+        messages.push(response.message);
+        messages.push({
+          role: "tool",
+          content: output.toString(),
         });
-        console.log("Final response:", finalResponse.message.content);
-    } else {
-        console.log("No tool calls returned from model");
+      } else {
+        console.log("Function", tool.function.name, "not found");
+      }
     }
 
-    return finalResponse
-
-
+    finalResponse = await ollama.chat({
+      model: model,
+      messages: messages,
+    });
+    console.log("Final response:", finalResponse.message.content);
+  } else {
+    console.log("No tool calls returned from model");
   }
 
-
+  return finalResponse;
+}
