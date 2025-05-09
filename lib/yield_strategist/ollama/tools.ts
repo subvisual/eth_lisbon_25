@@ -1,37 +1,17 @@
 import { getSafeBalances } from "@/lib/api";
 import { mockGnosisYield } from "../api/defillama";
 
-import { z } from "zod";
-
 export function getGnosisYield() {
   const data = mockGnosisYield();
 
   return JSON.stringify(data);
 }
 
-export const getJsonFieldTool = {
-  type: "function",
-  function: {
-    name: "getJsonField",
-    description:
-      "Extracts a specific field from a JSON object using dot notation path",
-    parameters: {
-      type: "object",
-      properties: {
-        json: {
-          type: "object",
-          description: "The JSON object to extract data from",
-        },
-        path: {
-          type: "string",
-          description:
-            "Path to the field using dot notation (e.g. 'user.address.street')",
-        },
-      },
-      required: ["json", "path"],
-    },
-  },
-};
+export async function checkSafeBalances({ addr }: { addr: string }) {
+  const balance = await getSafeBalances(addr);
+
+  return JSON.stringify(balance, null, 2);
+}
 
 export const getGnosisYieldTool = {
   type: "function",
@@ -42,6 +22,21 @@ export const getGnosisYieldTool = {
       type: "object",
       properties: {},
       required: [],
+    },
+  },
+};
+
+export const checkSafeBalancesTool = {
+  type: "function",
+  function: {
+    name: "checkSafeBalances",
+    description: "Displays the balances of the currently selected safe.",
+    parameters: {
+      type: "object",
+      required: ["addr"],
+      properties: {
+        addr: { type: "number", description: "The ethereum vault address." },
+      },
     },
   },
 };
