@@ -5,7 +5,8 @@ import {
   getGnosisYieldTool,
 } from "@/lib/yield_strategist/ollama/tools";
 
-const model = "qwen3:8b";
+const model = "0xroyce/Plutus-3B";
+// const model = "qwen3:8b";
 
 const availableFunctions = {
   getGnosisYield: getGnosisYield,
