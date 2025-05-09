@@ -1,0 +1,66 @@
+name: Next.js CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      NEXT_PUBLIC_DYNAMIC_API_KEY: ${{ secrets.NEXT_PUBLIC_DYNAMIC_API_KEY }}
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4.2.3
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ matrix.node-version }}-
+
+      - name: Cache Next.js build artifacts
+        uses: actions/cache@v4.2.3
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-nextjs-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ matrix.node-version }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Setup Node.js for contracts
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.10.0'
+
+      - name: Install smart-contract dependencies
+        working-directory: smart-contracts
+        run: npm ci
+
+      - name: Compile smart contracts
+        working-directory: smart-contracts
+        run: npx hardhat compile
+
+      - name: Build Next.js app
+        run: npm run build
