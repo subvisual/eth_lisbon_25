@@ -6,11 +6,7 @@ import { z } from "zod";
 export function getGnosisYield() {
   const data = mockGnosisYield();
 
-  // Find the sDAI yield information
-  const sdaiYieldData = data.filter((item) => item.symbol === "WSTETH")[0];
-  console.log("sDAI yield data:", sdaiYieldData);
-
-  return JSON.stringify(sdaiYieldData);
+  return JSON.stringify(data);
 }
 
 export const getJsonFieldTool = {
