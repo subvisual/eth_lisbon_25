@@ -100,7 +100,6 @@ const SafeInfo = ({ safeAddress }: { safeAddress: string }) => {
       const response = await apiKit.getSafeInfo(safeAddress);
       const balancesResponse = await getSafeBalances(safeAddress);
 
-      console.log(balancesResponse);
       setSafeInfo(response);
       setBalances(balancesResponse.items || []);
       setFiatTotal(balancesResponse.fiatTotal || null);
