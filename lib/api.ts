@@ -1,4 +1,5 @@
 import { apiKit } from "./apiKit";
+import { sepoliaNetwork } from "./evmNetworks";
 
 interface ShutterApiMessageData {
     eon: number;
@@ -115,3 +116,45 @@ export async function getSafesByOwner(ownerAddress: string) {
     return decodedData;
 }
 
+export interface SafeBalancesResponse {
+    fiatTotal: string;
+    items: SafeBalanceItem[];
+}
+
+export interface SafeBalanceItem {
+    balance: string;
+    fiatBalance: string;
+    fiatBalance24hChange: string;
+    fiatConversion: string;
+    tokenInfo: {
+        address: string;
+        name: string;
+        symbol: string;
+        decimals: number;
+        logoUri: string | null;
+        type: string;
+    };
+}
+
+export async function getSafeBalances(safeAddress: string): Promise<SafeBalancesResponse> {
+    try {
+        const url = `https://safe-client.safe.global/v1/chains/${sepoliaNetwork.chainId}/safes/${safeAddress}/balances/usd?trusted=false`        
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                accept: "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to fetch Safe balances: ${response.status} ${errorText}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching Safe balances:", error);
+        throw error;
+    }
+}
