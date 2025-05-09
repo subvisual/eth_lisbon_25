@@ -1,7 +1,7 @@
 import { Message } from 'ai';
 import { NextResponse } from 'next/server';
 import { StreamingTextResponse } from '@/lib/ai-utils';
-
+import { ollamaChat } from '@/lib/yield_strategist/api/ollama';
 
 export async function POST(req: Request) {
   try {
@@ -9,6 +9,8 @@ export async function POST(req: Request) {
     
     // Create a streaming text encoder
     const encoder = new TextEncoder();
+
+    const ollamaToolsChatMessages = await ollamaChat(messages) as Message[];
     
     // Create a stream from the Ollama API
     const stream = new ReadableStream({
@@ -21,7 +23,7 @@ export async function POST(req: Request) {
           },
           body: JSON.stringify({
             model: '0xroyce/Plutus-3B',
-            messages: messages.map(m => ({
+            messages: ollamaToolsChatMessages.map(m => ({
               role: m.role,
               content: m.content,
             })),
