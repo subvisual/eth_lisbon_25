@@ -154,7 +154,13 @@ const SafeInfo = ({ safeAddress }: { safeAddress: string }) => {
   );
 };
 
-export const ListVaults = ({ setSelectedSafe, selectedSafe }) => {
+export const ListVaults = ({
+  setSelectedSafe,
+  selectedSafe,
+}: {
+  setSelectedSafe: (safe: string) => void;
+  selectedSafe: string | undefined;
+}) => {
   const userWallets = useUserWallets();
   const [safes, setSafes] = useState<string[]>([]);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
