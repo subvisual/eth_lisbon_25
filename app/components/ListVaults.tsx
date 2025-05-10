@@ -154,10 +154,9 @@ const SafeInfo = ({ safeAddress }: { safeAddress: string }) => {
   );
 };
 
-export const ListVaults = () => {
+export const ListVaults = ({ setSelectedSafe, selectedSafe }) => {
   const userWallets = useUserWallets();
   const [safes, setSafes] = useState<string[]>([]);
-  const [selectedSafe, setSelectedSafe] = useState<string | null>(null);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
 
   useEffect(() => {
@@ -178,6 +177,7 @@ export const ListVaults = () => {
   }, [userWallets]);
 
   const handleSafeSelect = (value: string) => {
+    console.log("Selected Safe:", value);
     setSelectedSafe(value);
   };
 
