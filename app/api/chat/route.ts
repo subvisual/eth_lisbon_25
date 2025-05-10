@@ -38,36 +38,8 @@ export async function POST(req: Request) {
           maxSteps: 5,
           toolChoice: 'auto',
         });
-        
-        // Track if we've seen the getGnosisYield tool
-        let hasGnosisYieldResult = false;
-        
-        // Access the steps which includes tool calls and results
-        for await (const step of result.steps) {
-          if (step.type === 'tool_call') {
-            // Send tool call info
-            const sseMessage = `data: ${JSON.stringify({ tool_call: { name: step.tool.name } })}\n\n`;
-            controller.enqueue(encoder.encode(sseMessage));
-          } 
-          
-          if (step.type === 'tool_result') {
-            // Send tool result
-            const toolResultMsg = `data: ${JSON.stringify({ 
-              tool_result: { 
-                name: step.tool.name, 
-                content: step.content 
-              } 
-            })}\n\n`;
-            controller.enqueue(encoder.encode(toolResultMsg));
-            
-            // Track if we've used getGnosisYield
-            if (step.tool.name === 'getGnosisYield') {
-              hasGnosisYieldResult = true;
-            }
-          }
-        }
 
-        // Stream the final text response
+        // Access the textStream property which is the async iterable
         for await (const textPart of result.textStream) {
           // Format as expected by AIChat component
           const sseMessage = `data: ${JSON.stringify({ content: textPart })}\n\n`;
