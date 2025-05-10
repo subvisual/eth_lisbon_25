@@ -77,24 +77,49 @@ export const toolbelt: Toolbelt = {
     },
   ],
   functions: {
-    getGnosisYield: getGnosisYield,
-    checkSafeBalances: checkSafeBalances,
-    checkStrategies: checkStrategies,
+    getGnosisYield: getGnosisPoolYield,
+    getGnosisSafeBalances: getGnosisSafeBalances,
+    getYieldStrategies: getYieldStrategies,
   },
 };
 
-export async function getGnosisYield() {
+export async function getGnosisPoolYield({
+  tokens = [],
+}: { tokens?: string[] } = {}) {
+  console.log("pool yield checker called!");
   const data = await fetchGnosisYieldData();
 
-  return JSON.stringify(data);
+  // Filter data to only include pools with the requested tokens
+  let filteredData = data;
+
+  if (tokens && tokens.length > 0) {
+    filteredData = data.filter((item) => {
+      // Check if any of the tokens in the pool match the requested tokens
+      const poolTokens = [item.symbol].flat().filter(Boolean);
+      return tokens.some((token) =>
+        poolTokens.some((poolToken) =>
+          poolToken.toLowerCase().includes(token.toLowerCase())
+        )
+      );
+    });
+  }
+
+  return JSON.stringify(filteredData);
 }
 
-export async function checkSafeBalances({ addr }: { addr: string }) {
+export async function getGnosisSafeBalances({ addr }: { addr: string }) {
+  console.log("balance checker called!");
   const balance = await getSafeBalances(addr);
+
+  balance.items.forEach((token) => {
+    token.formattedBalance =
+      token.balance / Math.pow(10, token.tokenInfo.decimals);
+  });
 
   return JSON.stringify(balance);
 }
 
-export async function checkStrategies() {
+export async function getYieldStrategies() {
+  console.log("yield strategies checker called!");
   return JSON.stringify(strategies);
 }

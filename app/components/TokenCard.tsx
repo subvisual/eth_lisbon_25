@@ -40,7 +40,7 @@ export const TokenCard = ({ balance }: { balance: any }) => {
 
           <Flex justify="space-between" align="center" style={{ marginTop: 8 }}>
             <Statistic
-              value={formattedBalance}
+              value={balance.formattedBalance}
               precision={4}
               valueStyle={{ fontSize: 16 }}
               suffix={balance.tokenInfo?.symbol || "ETH"}
