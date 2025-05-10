@@ -16,6 +16,7 @@ async function createRouteRequest(
   fromTokenAddress: string,
   toTokenAddress: string,
   fromAmount: string,
+  fromAddress: string,
 ) {
   const routesRequest: RoutesRequest = {
     fromChainId,
@@ -23,21 +24,13 @@ async function createRouteRequest(
     fromTokenAddress,
     toTokenAddress,
     fromAmount,
+    fromAddress,
   };
 
   const result = await getRoutes(routesRequest);
   const routes = result.routes;
 
   return routes;
-}
-
-async function executeRouteRequest(route: Route, fromAddress: string) {
-  const executeRequest: ExecuteRequest = {
-    route,
-    fromAddress,
-  };
-
-  return await executeRoute(route);
 }
 
 async function createAndExecuteRoute(
@@ -54,6 +47,7 @@ async function createAndExecuteRoute(
     fromTokenAddress,
     toTokenAddress,
     fromAmount,
+    fromAddress,
   );
 
   if (routes.length === 0) {
@@ -62,5 +56,5 @@ async function createAndExecuteRoute(
 
   const route = routes[0];
 
-  return await executeRouteRequest(route, fromAddress);
+  return await executeRoute(route);
 }
