@@ -14,7 +14,6 @@ export async function ollamaChat(messages: Message[]) {
   });
 
   let output;
-  let finalResponse;
 
   if (response.message.tool_calls) {
     // Process tool calls from the response
@@ -35,18 +34,10 @@ export async function ollamaChat(messages: Message[]) {
       } else {
         console.log("Function", tool.function.name, "not found");
       }
-    }
-
-    // final response takes into account tool output
-    // and model reasoning with it
-    finalResponse = await ollama.chat({
-      model: model,
-      messages: messages,
-    });
-    console.log("Final response:", finalResponse.message.content);
+    } 
   } else {
     console.log("No tool calls returned from model");
   }
 
-  return finalResponse;
+  return messages;
 }
