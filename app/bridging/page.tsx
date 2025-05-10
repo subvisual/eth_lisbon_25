@@ -3,9 +3,11 @@ import { LiFiWidget } from "@lifi/widget";
 import { WidgetConfig, ChainType } from "@lifi/widget";
 import { useAccount } from "wagmi";
 import { useSafe } from "@/lib/providers";
+import { Card, Flex, Typography } from "antd";
+
+const { Title } = Typography;
 
 export default function BridgeAndSwapWidget() {
-  const { address } = useAccount();
   const { selectedSafe } = useSafe();
 
   const widgetConfig: WidgetConfig = {
@@ -67,13 +69,30 @@ export default function BridgeAndSwapWidget() {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="bg-white rounded-xl p-6 flex-1 flex flex-col">
-        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Bridge & Swap</h2>
-        <div className="flex-1" style={{ border: "1px solid #e8e8e8", borderRadius: "12px" }}>
-          <LiFiWidget config={widgetConfig} integrator="your-app-name" />
-        </div>
-      </div>
-    </div>
+    <Flex
+      style={{
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Flex>
+        <Title level={2} style={{ marginBottom: 16 }}>
+          Bridge & Swap
+        </Title>
+      </Flex>
+      <Flex
+        vertical
+        style={{
+          alignItems: "center",
+          flexGrow: 1,
+          borderRadius: "12px",
+          paddingTop: 16,
+        }}
+      >
+        <LiFiWidget config={widgetConfig} integrator="your-app-name" />
+      </Flex>
+    </Flex>
   );
 }

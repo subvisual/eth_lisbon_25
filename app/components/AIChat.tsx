@@ -8,6 +8,7 @@ import { SafeBalancesCard } from "./SafeBalancesCard";
 const { Text } = Typography;
 import { SYSTEM_PROMPT } from "../../lib/prompts";
 import { Transaction } from "./Transaction";
+
 type ToolCall = {
   id: string;
   type: string;

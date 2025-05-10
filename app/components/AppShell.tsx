@@ -21,11 +21,18 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         >
           <AppHeader />
           <Content style={{ flex: 1, paddingInline: 16 }}>
-            <div style={{ display: "flex", gap: "24px", padding: "24px" }}>
-              <div style={{ flex: "1" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "24px",
+                padding: "24px 24px 0",
+                height: "100%",
+              }}
+            >
+              <div style={{ display: "flex", flex: "1" }}>
                 <ListVaults />
               </div>
-              <div style={{ flex: "3" }}>{children}</div>
+              <div style={{ display: "flex", flex: "3" }}>{children}</div>
             </div>
           </Content>
           <Footer style={{ textAlign: "center" }}>

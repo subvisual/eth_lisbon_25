@@ -176,7 +176,7 @@ export const ListVaults = () => {
   };
 
   return (
-    <Flex vertical gap={24} style={{ marginTop: 24 }}>
+    <Flex vertical gap={24}>
       {isConnected && (
         <Flex vertical gap={24}>
           <Card bordered={false}>
