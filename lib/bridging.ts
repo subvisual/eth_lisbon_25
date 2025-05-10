@@ -1,47 +1,66 @@
-import { createConfig } from '@lifi/sdk'
-import { convertQuoteToRoute, executeRoute, getQuote, getRoutes } from '@lifi/sdk';
+import { createConfig } from "@lifi/sdk";
+import {
+  convertQuoteToRoute,
+  executeRoute,
+  getQuote,
+  getRoutes,
+} from "@lifi/sdk";
 
 createConfig({
-  integrator: 'eth-lisbon-2025',
-})
+  integrator: "eth-lisbon-2025",
+});
 
-
-async function createRouteRequest(fromChainId: number, toChainId: number, fromTokenAddress: string, toTokenAddress: string, fromAmount: string) {
+async function createRouteRequest(
+  fromChainId: number,
+  toChainId: number,
+  fromTokenAddress: string,
+  toTokenAddress: string,
+  fromAmount: string,
+) {
   const routesRequest: RoutesRequest = {
-    fromChainId, 
+    fromChainId,
     toChainId,
     fromTokenAddress,
     toTokenAddress,
-    fromAmount
+    fromAmount,
   };
 
   const result = await getRoutes(routesRequest);
   const routes = result.routes;
 
-  return routes
+  return routes;
 }
 
-
-
-async function executeRoute(route: Route, fromAddress: string) {
+async function executeRouteRequest(route: Route, fromAddress: string) {
   const executeRequest: ExecuteRequest = {
     route,
-    fromAddress
+    fromAddress,
   };
 
-  return await executeRoute(route)
+  return await executeRoute(route);
 }
 
-async function createAndExecuteRoute(fromChainId: number, toChainId: number, fromTokenAddress: string, toTokenAddress: string, fromAmount: string, fromAddress: string) {
-  const routes = await createRouteRequest(fromChainId, toChainId, fromTokenAddress, toTokenAddress, fromAmount);
+async function createAndExecuteRoute(
+  fromChainId: number,
+  toChainId: number,
+  fromTokenAddress: string,
+  toTokenAddress: string,
+  fromAmount: string,
+  fromAddress: string,
+) {
+  const routes = await createRouteRequest(
+    fromChainId,
+    toChainId,
+    fromTokenAddress,
+    toTokenAddress,
+    fromAmount,
+  );
 
   if (routes.length === 0) {
     return null;
   }
 
-  const route = routes[0]; 
+  const route = routes[0];
 
-  return await executeRoute(route, fromAddress);
+  return await executeRouteRequest(route, fromAddress);
 }
-
-
