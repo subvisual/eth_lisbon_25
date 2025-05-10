@@ -2,9 +2,11 @@
 import { LiFiWidget } from "@lifi/widget";
 import { WidgetConfig, ChainType } from "@lifi/widget";
 import { useAccount } from "wagmi";
+import { useSafe } from "@/lib/providers";
 
 export default function BridgeAndSwapWidget() {
   const { address } = useAccount();
+  const { selectedSafe } = useSafe();
 
   const widgetConfig: WidgetConfig = {
     integrator: "your-app-name",
@@ -12,7 +14,7 @@ export default function BridgeAndSwapWidget() {
     toToken: "0x2a22f9c3b484c3629090FeED35F17Ff8F88f76F0",
     toChain: 100,
     toAddress: {
-      address: "0xbeef" || "", // TODO: safe address ,
+      address: selectedSafe || "", // TODO: safe address ,
       chainType: ChainType.EVM,
     },
     tokens: {
