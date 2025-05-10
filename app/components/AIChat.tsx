@@ -1,16 +1,45 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Card, Input, Button, List, Typography, Flex, Spin } from "antd";
+import ReactMarkdown from "react-markdown";
 
 const { Text } = Typography;
 
 type Message = {
   id: string;
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "system";
   content: string;
 };
 
+// System prompt for financial analysis
+const SYSTEM_PROMPT = `As a financial analysis assistant, follow these guidelines when responding to queries:
+
+1. When you receive tool results with analytical data:
+   - Present numerical data in well-formatted tables when appropriate
+   - Use bullet points for key insights
+   - Format percentages, monetary values, and other numerical data consistently
+   - Highlight significant changes or outliers in the data
+
+2. For financial analysis:
+   - Prioritize the most relevant metrics (APY, TVL, ROI, etc.)
+   - Compare values against benchmarks when available
+   - Analyze trends and patterns from a professional finance perspective
+   - Provide context for the numbers (e.g., "This APY is 2.3% higher than market average")
+
+3. When displaying direct values or answers:
+   - Make important numbers stand out using formatting
+   - Organize information in a logical hierarchy
+   - Be concise and precise with financial terminology
+
+Always analyze from the perspective of an expert financial analyst, focusing on actionable insights rather than just raw data.`;
+
 export const AIChat = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: "system-prompt",
+      role: "system",
+      content: SYSTEM_PROMPT,
+    },
+  ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -146,7 +175,7 @@ export const AIChat = () => {
       >
         <List
           itemLayout="horizontal"
-          dataSource={messages}
+          dataSource={messages.filter((m) => m.role !== "system")}
           renderItem={(message) => {
             const isUser = message.role === "user";
             return (
@@ -162,7 +191,7 @@ export const AIChat = () => {
                 <Flex vertical style={{ width: "100%" }}>
                   <Text strong>{isUser ? "You" : "Assistant"}</Text>
                   <div style={{ whiteSpace: "pre-wrap" }}>
-                    {message.content}
+                    <ReactMarkdown>{message.content}</ReactMarkdown>
                   </div>
                 </Flex>
               </List.Item>
