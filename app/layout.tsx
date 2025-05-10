@@ -1,21 +1,26 @@
-import './globals.css';
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import AppShell from '@/app/components/AppShell';
+import "./globals.css";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import AppShell from "@/app/components/AppShell";
+import "@rainbow-me/rainbowkit/styles.css";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Gnosis Dapp Boilerplate',
-  description: 'Production‑ready Next.js starter for Gnosis Chain',
+  title: "Gnosis Dapp Boilerplate",
+  description: "Production‑ready Next.js starter for Gnosis Chain",
   icons: {
-    icon: '/icon.jpg', 
-    shortcut: '/icon.jpg',
-    apple: '/icon.jpg',
+    icon: "/icon.jpg",
+    shortcut: "/icon.jpg",
+    apple: "/icon.jpg",
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <head>

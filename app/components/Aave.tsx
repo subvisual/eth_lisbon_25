@@ -14,58 +14,33 @@ const { Header, Content } = Layout;
 const { Title } = Typography;
 const { Option } = Select;
 
-import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import { isEthereumWallet } from "@dynamic-labs/ethereum";
-import { getContract } from "viem";
 import { aavePoolV3Abi } from "../constants/abi/aavePoolV3";
 import { erc20Abi } from "../constants/abi/erc20";
 
-import { useWriteContract } from "wagmi";
+import {
+  useAccount,
+  useWriteContract,
+  useWalletClient,
+  useReadContract,
+} from "wagmi";
 
 export default function Aave() {
-  const { primaryWallet } = useDynamicContext();
+  const { address, isConnected } = useAccount();
+  const walletClient = useWalletClient();
+
   const { writeContract } = useWriteContract();
+
+  const { data: reservesList } = useReadContract({
+    abi: aavePoolV3Abi,
+    address: "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
+    functionName: "getReservesList",
+  });
+
+  console.log("here", reservesList);
 
   const [form] = Form.useForm();
 
   const onSubmit = async (values: any) => {
-    if (!primaryWallet || !isEthereumWallet(primaryWallet)) return;
-
-    const walletClient = await primaryWallet.getWalletClient();
-
-    const pool = getContract({
-      address: "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
-      abi: aavePoolV3Abi,
-      client: walletClient,
-    });
-
-    const reserveAddresses = await pool.read.getReservesList();
-
-    const reserves = await Promise.all(
-      reserveAddresses.map(async (tokenAddress) => {
-        try {
-          const tokenContract = getContract({
-            address: tokenAddress,
-            abi: erc20Abi,
-            client: walletClient,
-          });
-
-          const symbol = await tokenContract.read.symbol();
-
-          return {
-            tokenAddress,
-            symbol,
-            reserveData: await pool.read.getReserveData([tokenAddress]),
-          };
-        } catch (err) {
-          console.error(`Error loading data for ${tokenAddress}`, err);
-          return null;
-        }
-      })
-    );
-
-    console.log(reserves);
-
     const result = writeContract({
       abi: aavePoolV3Abi,
       address: "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",

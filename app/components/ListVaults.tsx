@@ -1,4 +1,4 @@
-import { useUserWallets } from "@dynamic-labs/sdk-react-core";
+import { useAccount } from "wagmi";
 import { getSafesByOwner, getSafeBalances, SafeBalanceItem } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { SafeInfoResponse } from "@safe-global/api-kit";
@@ -161,26 +161,17 @@ export const ListVaults = ({
   setSelectedSafe: (safe: string) => void;
   selectedSafe: string | undefined;
 }) => {
-  const userWallets = useUserWallets();
+  const { address, isConnected } = useAccount();
   const [safes, setSafes] = useState<string[]>([]);
-  const [walletAddress, setWalletAddress] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSafes = async () => {
-      if (userWallets.length === 0) {
-        console.log("No wallets found");
-        return;
-      }
-
-      const firstWallet = userWallets[0];
-      setWalletAddress(firstWallet.address);
-
-      // Fetch safes only for the first wallet
-      const response = await getSafesByOwner(firstWallet.address);
+      if (!address) return;
+      const response = await getSafesByOwner(address);
       setSafes(response.safes);
     };
     fetchSafes();
-  }, [userWallets]);
+  }, [address]);
 
   const handleSafeSelect = (value: string) => {
     console.log("Selected Safe:", value);
@@ -189,11 +180,11 @@ export const ListVaults = ({
 
   return (
     <Flex vertical gap={24} style={{ marginTop: 24 }}>
-      {walletAddress && (
+      {isConnected && (
         <Flex vertical gap={24}>
           <Card bordered={false}>
             <Title level={4}>Connected Wallet</Title>
-            <Text copyable>{walletAddress}</Text>
+            <Text copyable>{address}</Text>
           </Card>
 
           <Card bordered={false}>

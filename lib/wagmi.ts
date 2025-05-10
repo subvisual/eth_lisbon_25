@@ -6,4 +6,5 @@ export const config = createConfig({
   transports: {
     [sepolia.id]: http(),
   },
+  ssr: true,
 });
