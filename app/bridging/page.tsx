@@ -56,8 +56,10 @@ export default function BridgeAndSwapWidget() {
         },
         background: {
           paper: "#ffffff",
-          default: "#f5f5f5",
         },
+      },
+      container: {
+        borderRadius: "8px",
       },
       shape: {
         borderRadius: 12,
@@ -91,7 +93,19 @@ export default function BridgeAndSwapWidget() {
           paddingTop: 16,
         }}
       >
-        <LiFiWidget config={widgetConfig} integrator="your-app-name" />
+        <Card
+          style={{
+            width: "100%",
+            height: "100%",
+            padding: "24px",
+            background: "#fff",
+            margin: "24px",
+            borderRadius: "8px",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+          }}
+        >
+          <LiFiWidget config={widgetConfig} integrator="your-app-name" />
+        </Card>
       </Flex>
     </Flex>
   );

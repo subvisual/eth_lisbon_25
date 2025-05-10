@@ -17,6 +17,10 @@ const { Option } = Select;
 
 import { uiPoolDataProviderAbi } from "../constants/abi/uiPoolDataProvider";
 import { erc20Abi } from "../constants/abi/erc20";
+import { aavePoolV3Abi } from "../constants/abi/aavePoolV3";
+import { safeAccountAbi } from "../constants/abi/safeAccount";
+
+import { formatUnits } from "viem";
 
 import {
   useAccount,
@@ -27,7 +31,20 @@ import {
 import { useState, useEffect } from "react";
 import { aaveSupplyBorrowBatch } from "@/lib/aave/aaveSupplyBorrowBatch";
 import addresses from "@/app/constants/adresses.json";
-import { safeAccountAbi } from "../constants/abi/safeAccount";
+
+interface ReserveData {
+  underlyingAsset: string;
+  symbol: string;
+  decimals: number;
+  isActive: boolean;
+  borrowingEnabled: boolean;
+  baseLTVasCollateral: bigint;
+}
+
+interface ReservesResponse {
+  [0]: ReserveData[];
+  [1]: any[]; // We don't need the second array for now
+}
 
 const POOL_ADDRESSES_PROVIDER = "0x012bAC54348C0E635dCAc9D5FB99f06F24136C9A";
 
@@ -45,20 +62,22 @@ export default function Aave() {
   const [tokenBalances, setTokenBalances] = useState<{
     [address: string]: bigint;
   }>({});
+  const [selectedSupplyToken, setSelectedSupplyToken] =
+    useState<ReserveData | null>(null);
 
   const { data: reserves } = useReadContract({
     abi: uiPoolDataProviderAbi,
     address: "0x69529987FA4A075D0C00B0128fa848dc9ebbE9CE",
     functionName: "getReservesData",
     args: [POOL_ADDRESSES_PROVIDER],
-  });
+  }) as { data: ReservesResponse | undefined };
 
-  // const { data: userReserves } = useReadContract({
-  //   abi: uiPoolDataProviderAbi,
-  //   address: "0x69529987FA4A075D0C00B0128fa848dc9ebbE9CE",
-  //   functionName: "getUserReservesData",
-  //   args: [POOL_ADDRESSES_PROVIDER, address],
-  // });
+  const { data: userAccountData } = useReadContract({
+    abi: aavePoolV3Abi,
+    address: "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
+    functionName: "getUserAccountData",
+    args: [address!],
+  });
 
   useEffect(() => {
     const fetchBalances = async () => {
@@ -95,8 +114,8 @@ export default function Aave() {
 
   const getAvailableAmount = (tokenAddress: string, decimals: number) => {
     const bal = tokenBalances[tokenAddress];
-    if (!bal) return "0";
-    return (Number(bal) / 10 ** decimals).toFixed(4);
+    if (bal === undefined) return 0;
+    return formatUnits(bal, Number(decimals));
   };
 
   const onSubmit = async (values: FormValues) => {
@@ -133,12 +152,14 @@ export default function Aave() {
   };
 
   return (
-    <Layout style={{ minHeight: "600px", background: "#fafafa" }}>
+    <Layout style={{ minHeight: "600px", background: "#fff" }}>
       <Content
         style={{
           display: "flex",
           justifyContent: "center",
-          alignItems: "center",
+          alignItems: "flex-start",
+          padding: "24px",
+          gap: "24px",
         }}
       >
         <Card style={{ maxWidth: 450, flex: 1 }}>
@@ -154,33 +175,48 @@ export default function Aave() {
           >
             <Title level={5}>Supply</Title>
 
-            <Form.Item label="Asset to Supply" name="supplyAddress">
-              <Select placeholder="Select asset" optionLabelProp="label">
-                {reserves &&
-                  reserves[0]
-                    .filter((token) => token.isActive)
-                    .map((token) => (
-                      <Option
-                        key={token.underlyingAsset}
-                        value={token.underlyingAsset}
-                        label={token.symbol}
+            <Form.Item
+              label="Asset to Supply"
+              name="supplyAddress"
+              rules={[{ required: true }]}
+            >
+              <Select
+                placeholder="Select asset"
+                optionLabelProp="label"
+                onChange={(value: string) => {
+                  const token = reserves?.[0]?.find(
+                    (t: ReserveData) => t.underlyingAsset === value
+                  );
+                  setSelectedSupplyToken(token || null);
+                  form.setFieldValue("supplyAddress", value);
+                }}
+                style={{ width: "100%" }}
+              >
+                {reserves?.[0]
+                  ?.filter((token: ReserveData) => token.isActive)
+                  .map((token: ReserveData) => (
+                    <Option
+                      key={token.underlyingAsset}
+                      value={token.underlyingAsset}
+                      label={token.symbol}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
                       >
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <span>{token.symbol}</span>
-                          {/* <span style={{ color: "#888" }}>
-                            {getAvailableAmount(
-                              token.underlyingAsset,
-                              token.decimals
-                            )}
-                          </span> */}
-                        </div>
-                      </Option>
-                    ))}
+                        <span style={{ fontWeight: 500 }}>{token.symbol}</span>
+                        <span style={{ color: "#8c8c8c" }}>
+                          {getAvailableAmount(
+                            token.underlyingAsset,
+                            token.decimals
+                          )}
+                        </span>
+                      </div>
+                    </Option>
+                  ))}
               </Select>
             </Form.Item>
 
@@ -192,21 +228,67 @@ export default function Aave() {
                   required: true,
                   message: "Please input the amount to supply",
                 },
+                {
+                  validator: (_, value) => {
+                    const selectedToken = form.getFieldValue("supplyAddress");
+                    if (selectedToken && value) {
+                      const token = reserves?.[0]?.find(
+                        (t: ReserveData) => t.underlyingAsset === selectedToken
+                      );
+
+                      if (token) {
+                        const maxAmount = getAvailableAmount(
+                          token.underlyingAsset,
+                          token.decimals
+                        );
+                        if (value > maxAmount) {
+                          return Promise.reject(
+                            new Error(
+                              `Amount exceeds available balance of ${maxAmount}`
+                            )
+                          );
+                        }
+                      }
+                    }
+                    return Promise.resolve();
+                  },
+                },
               ]}
             >
               <Space direction="vertical" style={{ width: "100%" }}>
-                <InputNumber min={0} style={{ width: "100%" }} />
+                <InputNumber min={0} style={{ width: "100%" }} size="large" />
+                <Text type="secondary" style={{ fontSize: "12px" }}>
+                  Max:{" "}
+                  {selectedSupplyToken
+                    ? getAvailableAmount(
+                        selectedSupplyToken.underlyingAsset,
+                        selectedSupplyToken.decimals
+                      )
+                    : 0}
+                </Text>
               </Space>
             </Form.Item>
 
-            <Title level={5}>Borrow</Title>
+            <div style={{ marginBottom: "32px" }}>
+              <Title
+                level={5}
+                style={{ marginBottom: "16px", color: "#1a1a1a" }}
+              >
+                Borrow
+              </Title>
 
-            <Form.Item label="Asset to Borrow" name="borrowAddress">
-              <Select placeholder="Select asset">
-                {reserves &&
-                  reserves[0]
-                    .filter((token) => token.isActive && token.borrowingEnabled)
-                    .map((token) => (
+              <Form.Item
+                label="Asset to Borrow"
+                name="borrowAddress"
+                rules={[{ required: true }]}
+              >
+                <Select placeholder="Select asset" style={{ width: "100%" }}>
+                  {reserves?.[0]
+                    ?.filter(
+                      (token: ReserveData) =>
+                        token.isActive && token.borrowingEnabled
+                    )
+                    .map((token: ReserveData) => (
                       <Option
                         key={token.underlyingAsset}
                         value={token.underlyingAsset}
@@ -214,34 +296,149 @@ export default function Aave() {
                         {token.symbol}
                       </Option>
                     ))}
-              </Select>
-            </Form.Item>
+                </Select>
+              </Form.Item>
 
-            <Form.Item
-              label="Amount to Borrow"
-              name="borrowAmount"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input the amount to borrow",
-                },
-              ]}
-            >
-              <InputNumber min={0} style={{ width: "100%" }} />
-            </Form.Item>
+              <Form.Item
+                label="Amount to Borrow"
+                name="borrowAmount"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the amount to borrow",
+                  },
+                ]}
+              >
+                <Space direction="vertical" style={{ width: "100%" }}>
+                  <InputNumber min={0} style={{ width: "100%" }} size="large" />
+                </Space>
+              </Form.Item>
+            </div>
 
             <Form.Item>
               <Button
                 type="primary"
                 htmlType="submit"
                 block
-                disabled={!isConnected}
+                size="large"
+                disabled={
+                  !isConnected ||
+                  form.getFieldsError().some(({ errors }) => errors.length)
+                }
+                style={{
+                  height: "48px",
+                  borderRadius: "8px",
+                  fontSize: "16px",
+                }}
               >
                 Submit
               </Button>
             </Form.Item>
           </Form>
         </Card>
+
+        {isConnected && userAccountData && userAccountData[0] && (
+          <Card
+            title="Your Aave Position"
+            style={{
+              maxWidth: 450,
+              flex: 1,
+              borderRadius: "12px",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+            }}
+            headStyle={{
+              borderBottom: "1px solid #f0f0f0",
+              padding: "16px 24px",
+            }}
+            bodyStyle={{
+              padding: "24px",
+            }}
+          >
+            <Space direction="vertical" style={{ width: "100%" }} size="large">
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "#8c8c8c" }}>Total Collateral (USD)</Text>
+                <Text strong style={{ fontSize: "16px" }}>
+                  ${formatUnits(userAccountData[0], 8)}
+                </Text>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "#8c8c8c" }}>Total Debt (USD)</Text>
+                <Text strong style={{ fontSize: "16px" }}>
+                  ${formatUnits(userAccountData[1], 8)}
+                </Text>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "#8c8c8c" }}>Available Borrow (USD)</Text>
+                <Text strong style={{ fontSize: "16px" }}>
+                  ${formatUnits(userAccountData[2], 8)}
+                </Text>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "#8c8c8c" }}>
+                  Current Liquidation Threshold
+                </Text>
+                <Text strong style={{ fontSize: "16px" }}>
+                  {(Number(userAccountData[3]) / 10000).toFixed(2)}%
+                </Text>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "#8c8c8c" }}>LTV</Text>
+                <Text strong style={{ fontSize: "16px" }}>
+                  {(Number(userAccountData[4]) / 10000).toFixed(2)}%
+                </Text>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "#8c8c8c" }}>Health Factor</Text>
+                <Text
+                  strong
+                  style={{
+                    fontSize: "16px",
+                    color:
+                      Number(userAccountData[5]) > 1 ? "#52c41a" : "#ff4d4f",
+                  }}
+                >
+                  {formatUnits(userAccountData[5], 18)}
+                </Text>
+              </div>
+            </Space>
+          </Card>
+        )}
       </Content>
     </Layout>
   );
