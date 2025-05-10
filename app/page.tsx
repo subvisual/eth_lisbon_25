@@ -17,7 +17,7 @@ export default function HomePage() {
           selectedSafe={selectedSafe}
         />
       </div>
-      <div style={{ flex: "2" }}>
+      <div style={{ flex: "3" }}>
         {selectedSafe && <AIChat safeAddress={selectedSafe} />}
       </div>
     </div>

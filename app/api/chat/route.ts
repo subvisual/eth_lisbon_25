@@ -1,5 +1,5 @@
 import { openai } from '@ai-sdk/openai';
-import { streamText, tool } from 'ai';
+import { generateText, tool } from 'ai';
 import { z } from 'zod';
 import { getGnosisYield, checkSafeBalances } from '@/lib/yield_strategist/ollama/tools';
 
@@ -7,7 +7,7 @@ const strategistTools = {
   getGnosisYield: tool({
     description: 'Gets yields for liquidity pools on gnosis.',
     parameters: z.object({}),
-    execute: async () => JSON.parse(getGnosisYield()),
+    execute: async () => JSON.parse(await getGnosisYield()),
   }),
   checkSafeBalances: tool({
     description: 'Displays the balances of the currently selected safe.',
@@ -27,36 +27,44 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
   const encoder = new TextEncoder();
 
-  // Create a custom stream
-  const stream = new ReadableStream({
-    async start(controller) {
-      try {
-        const result = streamText({
-          model: nanoModel,
-          messages,
-          tools: strategistTools,
-          maxSteps: 5,
-          toolChoice: 'auto',
-        });
-
-        // Access the textStream property which is the async iterable
-        for await (const textPart of result.textStream) {
-          // Format as expected by AIChat component
-          const sseMessage = `data: ${JSON.stringify({ content: textPart })}\n\n`;
-          controller.enqueue(encoder.encode(sseMessage));
-        }
-        
-        // Signal the end of the stream
-        controller.enqueue(encoder.encode('data: [DONE]\n\n'));
-        controller.close();
-      } catch (error) {
-        console.error('Error in chat API:', error);
-        controller.error(error);
+  const result = await generateText({
+    model: nanoModel,
+    messages,
+    tools: strategistTools,
+    maxSteps: 5,
+    toolChoice: 'auto',
+  });
+  
+  // Extract tool calls and results from steps
+  let extractedToolCalls = [];
+  let extractedToolResults = [];
+  
+  // If steps array exists and has entries
+  if (result.steps && result.steps.length > 0) {
+    for (const step of result.steps) {
+      // Collect tool calls from step
+      if (step.toolCalls && step.toolCalls.length > 0) {
+        extractedToolCalls = extractedToolCalls.concat(step.toolCalls);
+      }
+      
+      // Collect tool results from step
+      if (step.toolResults && step.toolResults.length > 0) {
+        extractedToolResults = extractedToolResults.concat(step.toolResults);
       }
     }
-  });
+  }
 
-  return new Response(stream, {
-    headers: { 'Content-Type': 'text/event-stream' },
-  });
+  // Create a Response with both the text result and extracted tool data
+  return new Response(
+    JSON.stringify({
+      content: result.text,
+      toolCalls: extractedToolCalls,
+      toolResults: extractedToolResults
+    }),
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
 } 

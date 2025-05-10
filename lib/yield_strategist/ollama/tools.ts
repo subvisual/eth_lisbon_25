@@ -1,6 +1,6 @@
 import { getSafeBalances } from "@/lib/api";
-import { mockGnosisYield } from "../api/defillama";
 import strategies from "../../../scrapping/delta-neutral.json";
+import { fetchGnosisYieldData } from "../api/defillama";
 
 interface OllamaToolsArg {
   type: string;
@@ -83,8 +83,8 @@ export const toolbelt: Toolbelt = {
   },
 };
 
-export function getGnosisYield() {
-  const data = mockGnosisYield();
+export async function getGnosisYield() {
+  const data = await fetchGnosisYieldData();
 
   return JSON.stringify(data);
 }

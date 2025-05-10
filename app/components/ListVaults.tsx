@@ -80,7 +80,7 @@ const TokenCard = ({ balance }: { balance: SafeBalanceItem }) => {
                 }
               >
                 {isPositiveChange ? "+" : ""}
-                {balance.fiatBalance24hChange}% (24h)
+                {Number(balance.fiatBalance24hChange).toFixed(2)}% (24h)
               </Tag>
             </Flex>
           )}
@@ -143,7 +143,7 @@ const SafeInfo = ({ safeAddress }: { safeAddress: string }) => {
         >
           <Row gutter={[16, 16]}>
             {balances.map((balance, index) => (
-              <Col xs={24} md={12} xl={8} key={index}>
+              <Col xs={24} md={24} xl={24} key={index}>
                 <TokenCard balance={balance} />
               </Col>
             ))}
