@@ -27,13 +27,13 @@ export default function BridgeAndSwapWidget() {
         {
           address: "0xcB444e90D8198415266c6a2724b7900fb12FC56E",
           symbol: "EURe",
-          deciamls: 18,
+          decimals: 18,
           chainId: 100,
         },
         {
           address: "0x5Cb9073902F2035222B9749F8fB0c9BFe5527108",
           symbol: "EURe",
-          deciamls: 18,
+          decimals: 18,
           chainId: 100,
         },
       ],
