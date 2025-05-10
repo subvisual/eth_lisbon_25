@@ -8,40 +8,97 @@ import {
   Select,
   Button,
   Card,
+  Space,
 } from "antd";
 
 const { Header, Content } = Layout;
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { Option } = Select;
 
 import { aavePoolV3Abi } from "../constants/abi/aavePoolV3";
+import { uiPoolDataProviderAbi } from "../constants/abi/uiPoolDataProvider";
+import { walletBalanceProviderAbi } from "../constants/abi/walletBalanceProviderAbi";
 import { erc20Abi } from "../constants/abi/erc20";
 
 import {
   useAccount,
   useWriteContract,
-  useWalletClient,
   useReadContract,
+  usePublicClient,
 } from "wagmi";
+import { useState, useEffect } from "react";
+
+const POOL_ADDRESSES_PROVIDER = "0x012bAC54348C0E635dCAc9D5FB99f06F24136C9A";
 
 export default function Aave() {
   const { address, isConnected } = useAccount();
-  const walletClient = useWalletClient();
-
+  const publicClient = usePublicClient();
   const { writeContract } = useWriteContract();
+  const [tokenBalances, setTokenBalances] = useState<{
+    [address: string]: bigint;
+  }>({});
 
-  const { data: reservesList } = useReadContract({
-    abi: aavePoolV3Abi,
-    address: "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
-    functionName: "getReservesList",
+  const { data: reserves } = useReadContract({
+    abi: uiPoolDataProviderAbi,
+    address: "0x69529987FA4A075D0C00B0128fa848dc9ebbE9CE",
+    functionName: "getReservesData",
+    args: [POOL_ADDRESSES_PROVIDER],
   });
 
-  console.log("here", reservesList);
+  // const { data: userReserves } = useReadContract({
+  //   abi: uiPoolDataProviderAbi,
+  //   address: "0x69529987FA4A075D0C00B0128fa848dc9ebbE9CE",
+  //   functionName: "getUserReservesData",
+  //   args: [POOL_ADDRESSES_PROVIDER, address],
+  // });
+
+  useEffect(() => {
+    const fetchBalances = async () => {
+      if (!reserves || !address || !publicClient) return;
+
+      console.log(reserves);
+      const balances: { [tokenAddress: string]: bigint } = {};
+
+      const tokenAddresses = reserves[0].map((r) => r.underlyingAsset);
+
+      await Promise.all(
+        tokenAddresses.map(async (tokenAddr: string) => {
+          try {
+            const balance = await publicClient.readContract({
+              abi: erc20Abi,
+              address: tokenAddr,
+              functionName: "balanceOf",
+              args: [address],
+            });
+
+            console.log(tokenAddr, balance);
+
+            balances[tokenAddr] = balance as bigint;
+          } catch (err) {
+            console.error(`Failed to fetch balance for ${tokenAddr}`, err);
+          }
+        })
+      );
+
+      setTokenBalances(balances);
+    };
+
+    fetchBalances();
+  }, [reserves, address, publicClient]);
 
   const [form] = Form.useForm();
 
+  const getAvailableAmount = (tokenAddress: string, decimals: number) => {
+    const bal = tokenBalances[tokenAddress];
+    if (!bal) return "0";
+    return (Number(bal) / Math.pow(10, decimals)).toFixed(4);
+  };
+
   const onSubmit = async (values: any) => {
-    const result = writeContract({
+    console.log("reservesList2", reserves);
+    console.log("userBalances2", tokenBalances);
+
+    writeContract({
       abi: aavePoolV3Abi,
       address: "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
       functionName: "supply",
@@ -92,16 +149,38 @@ export default function Aave() {
             initialValues={{
               lendAmount: 0,
               borrowAmount: 0,
-              lendAsset: "wstETH",
-              borrowAsset: "EURe",
+              lendAsset: "WETH",
             }}
           >
             <Title level={5}>Supply</Title>
 
             <Form.Item label="Asset to Supply" name="lendAsset">
-              <Select placeholder="Select asset">
-                <Option value="ETH">wstETH</Option>
-                <Option value="USDC">USDC.e</Option>
+              <Select placeholder="Select asset" optionLabelProp="label">
+                {reserves &&
+                  reserves[0]
+                    .filter((token) => token.isActive)
+                    .map((token) => (
+                      <Option
+                        key={token.underlyingAsset}
+                        value={token.underlyingAsset}
+                        label={token.symbol}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <span>{token.symbol}</span>
+                          <span style={{ color: "#888" }}>
+                            {getAvailableAmount(
+                              token.underlyingAsset,
+                              token.decimals
+                            )}
+                          </span>
+                        </div>
+                      </Option>
+                    ))}
               </Select>
             </Form.Item>
 
@@ -115,15 +194,26 @@ export default function Aave() {
                 },
               ]}
             >
-              <InputNumber min={0} style={{ width: "100%" }} />
+              <Space direction="vertical" style={{ width: "100%" }}>
+                <InputNumber min={0} style={{ width: "100%" }} />
+              </Space>
             </Form.Item>
 
             <Title level={5}>Borrow</Title>
 
             <Form.Item label="Asset to Borrow" name="borrowAsset">
               <Select placeholder="Select asset">
-                <Option value="EURe">EURe</Option>
-                <Option value="USDC">USDC.e</Option>
+                {reserves &&
+                  reserves[0]
+                    .filter((token) => token.isActive && token.borrowingEnabled)
+                    .map((token) => (
+                      <Option
+                        key={token.underlyingAsset}
+                        value={token.underlyingAsset}
+                      >
+                        {token.symbol}
+                      </Option>
+                    ))}
               </Select>
             </Form.Item>
 
@@ -141,7 +231,12 @@ export default function Aave() {
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit" block>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                disabled={!isConnected}
+              >
                 Submit
               </Button>
             </Form.Item>
