@@ -21,7 +21,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <AppHeader />
           <Content style={{ flex: 1, paddingInline: 16 }}>{children}</Content>
           <Footer style={{ textAlign: "center" }}>
-            © {new Date().getFullYear()} Gnosis • Built with ❤️ for Devs
+            © {new Date().getFullYear()} Subvisual • Built with ❤️ & redbull
           </Footer>
         </Layout>
       </Providers>
