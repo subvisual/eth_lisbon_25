@@ -9,7 +9,7 @@ createConfig({
 async function createRouteRequest(fromChainId: number, toChainId: number, fromTokenAddress: string, toTokenAddress: string, fromAmount: string) {
   const routesRequest: RoutesRequest = {
     fromChainId, 
-    toChainId
+    toChainId,
     fromTokenAddress,
     toTokenAddress,
     fromAmount
