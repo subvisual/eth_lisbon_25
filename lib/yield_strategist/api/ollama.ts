@@ -2,8 +2,8 @@ import ollama, { Message } from "ollama";
 
 import { toolbelt } from "@/lib/yield_strategist/ollama/tools";
 
-const model = "0xroyce/Plutus-3B";
-// const model = "qwen3:8b";
+// const model = "0xroyce/Plutus-3B";
+const model = "qwen3:8b";
 
 // todo: maybe impl ollamaChatWithTools
 export async function ollamaChat(messages: Message[]) {
@@ -34,7 +34,7 @@ export async function ollamaChat(messages: Message[]) {
       } else {
         console.log("Function", tool.function.name, "not found");
       }
-    } 
+    }
   } else {
     console.log("No tool calls returned from model");
   }
