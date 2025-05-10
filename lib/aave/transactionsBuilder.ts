@@ -31,25 +31,25 @@ export const approveErc20TxBuilder = (
 	return aprooveTx;
 };
 
-export const sendErc20TxBuilder = (
+export const transferErc20TxBuilder = (
 	tokenAddress: string,
 	toAddress: string,
 	amount: string,
 ) => {
-	const sendErc20TxData = encodeFunctionData({
+	const transferErc20TxData = encodeFunctionData({
 		functionName: "transfer",
 		args: [toAddress, amount],
 		abi: erc20Abi,
 	});
 
-	const sendErc20Tx: MetaTransaction = {
+	const transferErc20Tx: MetaTransaction = {
 		to: tokenAddress,
-		data: sendErc20TxData,
+		data: transferErc20TxData,
 		value: BigInt(0),
 		operation: 0,
 	};
 
-	return sendErc20Tx;
+	return transferErc20Tx;
 };
 
 export const aaveSupplyTxBuilder = (
