@@ -170,94 +170,103 @@ export const AIChat = ({ safeAddress }: { safeAddress: string }) => {
   };
 
   return (
-    <Card
-      title="AI Assistant"
-      bordered={false}
-      style={{ height: "100%", display: "flex", flexDirection: "column" }}
-      bodyStyle={{
-        flex: 1,
+    <Flex
+      style={{
+        height: "100%",
+        width: "100%",
         display: "flex",
         flexDirection: "column",
-        overflow: "hidden",
       }}
     >
-      <div
-        style={{
+      <Card
+        title="AI Assistant"
+        bordered={false}
+        style={{ height: "100%", display: "flex", flexDirection: "column" }}
+        bodyStyle={{
           flex: 1,
-          overflowY: "auto",
-          marginBottom: 16,
-          padding: "0 4px",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
         }}
       >
-        <List
-          itemLayout="horizontal"
-          dataSource={messages.filter((m) => m.role !== "system")}
-          renderItem={(message) => {
-            const isUser = message.role === "user";
-            const lastToolResult =
-              message.toolResults?.[message.toolResults.length - 1];
-
-            return (
-              <List.Item
-                style={{
-                  padding: "8px 12px",
-                  background: isUser ? "#f0f2f5" : "white",
-                  borderRadius: 8,
-                  marginBottom: 8,
-                  textAlign: isUser ? "right" : "left",
-                }}
-              >
-                <Flex vertical style={{ width: "100%" }}>
-                  {!isUser && lastToolResult && (
-                    <div
-                      style={{
-                        marginTop: 8,
-                        borderRadius: 8,
-                      }}
-                    >
-                      <ToolResultRenderer
-                        key={lastToolResult.toolCallId}
-                        toolResult={lastToolResult}
-                      />
-                    </div>
-                  )}
-
-                  <Text strong style={{ marginTop: 28 }}>
-                    {isUser ? "You" : "Assistant"}
-                  </Text>
-                  <div style={{ whiteSpace: "pre-wrap", marginTop: 8 }}>
-                    <ReactMarkdown>{message.content}</ReactMarkdown>
-                  </div>
-                </Flex>
-              </List.Item>
-            );
+        <div
+          style={{
+            flex: 1,
+            overflowY: "auto",
+            marginBottom: 16,
+            padding: "0 4px",
           }}
-        />
-        <div ref={messagesEndRef} />
-        {isLoading && (
-          <div style={{ textAlign: "center", padding: "10px" }}>
-            <Spin size="small" />
-          </div>
-        )}
-      </div>
-
-      <form onSubmit={handleSubmit} style={{ display: "flex" }}>
-        <Input
-          value={input}
-          onChange={handleInputChange}
-          placeholder="Ask about your vaults or crypto..."
-          disabled={isLoading}
-          style={{ flex: 1 }}
-        />
-        <Button
-          type="primary"
-          htmlType="submit"
-          loading={isLoading}
-          style={{ marginLeft: 8 }}
         >
-          Send
-        </Button>
-      </form>
-    </Card>
+          <List
+            itemLayout="horizontal"
+            dataSource={messages.filter((m) => m.role !== "system")}
+            renderItem={(message) => {
+              const isUser = message.role === "user";
+              const lastToolResult =
+                message.toolResults?.[message.toolResults.length - 1];
+
+              return (
+                <List.Item
+                  style={{
+                    padding: "8px 12px",
+                    background: isUser ? "#f0f2f5" : "white",
+                    borderRadius: 8,
+                    marginBottom: 8,
+                    textAlign: isUser ? "right" : "left",
+                  }}
+                >
+                  <Flex vertical style={{ width: "100%" }}>
+                    {!isUser && lastToolResult && (
+                      <div
+                        style={{
+                          marginTop: 8,
+                          borderRadius: 8,
+                        }}
+                      >
+                        <ToolResultRenderer
+                          key={lastToolResult.toolCallId}
+                          toolResult={lastToolResult}
+                        />
+                      </div>
+                    )}
+
+                    <Text strong style={{ marginTop: 28 }}>
+                      {isUser ? "You" : "Assistant"}
+                    </Text>
+                    <div style={{ whiteSpace: "pre-wrap", marginTop: 8 }}>
+                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                    </div>
+                  </Flex>
+                </List.Item>
+              );
+            }}
+          />
+          <div ref={messagesEndRef} />
+          {isLoading && (
+            <div style={{ textAlign: "center", padding: "10px" }}>
+              <Spin size="small" />
+            </div>
+          )}
+        </div>
+
+        <form onSubmit={handleSubmit} style={{ display: "flex" }}>
+          <Input
+            value={input}
+            onChange={handleInputChange}
+            placeholder="Ask about your vaults or crypto..."
+            disabled={isLoading}
+            style={{ flex: 1 }}
+          />
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={isLoading}
+            style={{ marginLeft: 8 }}
+          >
+            Send
+          </Button>
+        </form>
+      </Card>
+    </Flex>
   );
 };
