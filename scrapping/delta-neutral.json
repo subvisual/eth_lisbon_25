@@ -5,7 +5,20 @@
     "Delta": "37.12%",
     "Available": "75%",
     "Farm TVL": "$3.78m",
-    "LTV": "$60,299"
+    "LTV": "$60,299",
+    "Supply APY": "2.38%",
+    "Borrow APY": "-1.48%",
+    "Farm APY": "51.53%",
+    "Max LTV": "75%",
+    "Available Borrow Liquidity": "$4.03m",
+    "Farm Details": "$61.08k",
+    "Steps": [
+      "Lend USDC.E as collateral on aave-v3 which earns a Supply APY of 2.38%.",
+      "Borrow WETH against your USDC.E collateral with a max LTV of 75% and a borrow APY of -1.48% (The interest you need to pay).",
+      "Swap borrowed WETH for",
+      "Farm with on aura which earns 51.53%."
+    ],
+    "Strategy APY Calculation": "2.38% -1.48% * 0.75 + 51.53% * 0.75 = 39.92%"
   },
   {
     "Strategy": "2\nUSDC.E \u279e GNO \u279e\n2\n|\nAAVE V3\n->\nAura",
@@ -13,7 +26,20 @@
     "Delta": "36.28%",
     "Available": "75%",
     "Farm TVL": "$9.78m",
-    "LTV": "$60,299"
+    "LTV": "$60,299",
+    "Supply APY": "2.38%",
+    "Borrow APY": "-2.64%",
+    "Farm APY": "51.53%",
+    "Max LTV": "75%",
+    "Available Borrow Liquidity": "$10.13m",
+    "Farm Details": "$61.08k",
+    "Steps": [
+      "Lend USDC.E as collateral on aave-v3 which earns a Supply APY of 2.38%.",
+      "Borrow GNO against your USDC.E collateral with a max LTV of 75% and a borrow APY of -2.64% (The interest you need to pay).",
+      "Swap borrowed GNO for",
+      "Farm with on aura which earns 51.53%."
+    ],
+    "Strategy APY Calculation": "2.38% -2.64% * 0.75 + 51.53% * 0.75 = 39.05%"
   },
   {
     "Strategy": "3\nUSDC.E \u279e EURE \u279e\n3\n|\nAAVE V3\n->\nAura",
@@ -21,7 +47,20 @@
     "Delta": "35.09%",
     "Available": "75%",
     "Farm TVL": "$2.81m",
-    "LTV": "$60,299"
+    "LTV": "$60,299",
+    "Supply APY": "2.38%",
+    "Borrow APY": "-4.21%",
+    "Farm APY": "51.53%",
+    "Max LTV": "75%",
+    "Available Borrow Liquidity": "$2.82m",
+    "Farm Details": "$61.08k",
+    "Steps": [
+      "Lend USDC.E as collateral on aave-v3 which earns a Supply APY of 2.38%.",
+      "Borrow EURE against your USDC.E collateral with a max LTV of 75% and a borrow APY of -4.21% (The interest you need to pay).",
+      "Swap borrowed EURE for",
+      "Farm with on aura which earns 51.53%."
+    ],
+    "Strategy APY Calculation": "2.38% -4.21% * 0.75 + 51.53% * 0.75 = 37.87%"
   },
   {
     "Strategy": "4\nUSDC.E \u279e WXDAI \u279e\n4\n|\nAAVE V3\n->\nAura",
@@ -29,7 +68,20 @@
     "Delta": "34.80%",
     "Available": "75%",
     "Farm TVL": "$1.52m",
-    "LTV": "$60,299"
+    "LTV": "$60,299",
+    "Supply APY": "2.38%",
+    "Borrow APY": "-4.77%",
+    "Farm APY": "51.53%",
+    "Max LTV": "75%",
+    "Available Borrow Liquidity": "$1.33m",
+    "Farm Details": "$61.08k",
+    "Steps": [
+      "Lend USDC.E as collateral on aave-v3 which earns a Supply APY of 2.38%.",
+      "Borrow WXDAI against your USDC.E collateral with a max LTV of 75% and a borrow APY of -4.77% (The interest you need to pay).",
+      "Swap borrowed WXDAI for",
+      "Farm with on aura which earns 51.53%."
+    ],
+    "Strategy APY Calculation": "2.38% -4.77% * 0.75 + 51.53% * 0.75 = 37.45%"
   },
   {
     "Strategy": "5\nUSDC \u279e WETH \u279e\n5\n|\nAAVE V3\n->\nAura",
@@ -37,7 +89,20 @@
     "Delta": "32.17%",
     "Available": "65%",
     "Farm TVL": "$3.78m",
-    "LTV": "$60,299"
+    "LTV": "$60,299",
+    "Supply APY": "3.30%",
+    "Borrow APY": "-1.48%",
+    "Farm APY": "51.53%",
+    "Max LTV": "65%",
+    "Available Borrow Liquidity": "$4.03m",
+    "Farm Details": "$61.08k",
+    "Steps": [
+      "Lend USDC as collateral on aave-v3 which earns a Supply APY of 3.30%.",
+      "Borrow WETH against your USDC collateral with a max LTV of 65% and a borrow APY of -1.48% (The interest you need to pay).",
+      "Swap borrowed WETH for",
+      "Farm with on aura which earns 51.53%."
+    ],
+    "Strategy APY Calculation": "3.30% -1.48% * 0.65 + 51.53% * 0.65 = 35.73%"
   },
   {
     "Strategy": "6\nUSDC.E \u279e USDC \u279e\n6\n|\nAAVE V3\n->\nAura",
@@ -45,7 +110,20 @@
     "Delta": "32.37%",
     "Available": "75%",
     "Farm TVL": "$349,494",
-    "LTV": "$60,299"
+    "LTV": "$60,299",
+    "Supply APY": "2.38%",
+    "Borrow APY": "-7.82%",
+    "Farm APY": "51.53%",
+    "Max LTV": "75%",
+    "Available Borrow Liquidity": "$350.33k",
+    "Farm Details": "$61.08k",
+    "Steps": [
+      "Lend USDC.E as collateral on aave-v3 which earns a Supply APY of 2.38%.",
+      "Borrow USDC against your USDC.E collateral with a max LTV of 75% and a borrow APY of -7.82% (The interest you need to pay).",
+      "Swap borrowed USDC for",
+      "Farm with on aura which earns 51.53%."
+    ],
+    "Strategy APY Calculation": "2.38% -7.82% * 0.75 + 51.53% * 0.75 = 35.04%"  
   },
   {
     "Strategy": "7\nUSDC \u279e GNO \u279e\n7\n|\nAAVE V3\n->\nAura",
@@ -53,38 +131,19 @@
     "Delta": "31.44%",
     "Available": "65%",
     "Farm TVL": "$9.78m",
-    "LTV": "$60,299"
-  },
-  {
-    "Strategy": "8\nUSDC \u279e USDC.E \u279e\n8\n|\nAAVE V3\n->\nAura",
-    "Strategy APY": "33.81%",
-    "Delta": "30.50%",
-    "Available": "65%",
-    "Farm TVL": "$2.66m",
-    "LTV": "$60,299"
-  },
-  {
-    "Strategy": "9\nUSDC \u279e EURE \u279e\n9\n|\nAAVE V3\n->\nAura",
-    "Strategy APY": "33.72%",
-    "Delta": "30.41%",
-    "Available": "65%",
-    "Farm TVL": "$2.81m",
-    "LTV": "$60,299"
-  },
-  {
-    "Strategy": "10\nUSDC \u279e WXDAI \u279e\n10\n|\nAAVE V3\n->\nAura",
-    "Strategy APY": "33.47%",
-    "Delta": "30.16%",
-    "Available": "65%",
-    "Farm TVL": "$1.52m",
-    "LTV": "$60,299"
-  },
-  {
-    "Strategy": "11\nUSDC.E \u279e WETH \u279e\n11\n|\nAAVE V3\n->\nAura",
-    "Strategy APY": "11.63%",
-    "Delta": "9.20%",
-    "Available": "75%",
-    "Farm TVL": "$3.78m",
-    "LTV": "$71,714"
+    "LTV": "$60,299",
+    "Supply APY": "3.30%",
+    "Borrow APY": "-2.64%",
+    "Farm APY": "51.53%",
+    "Max LTV": "65%",
+    "Available Borrow Liquidity": "$10.13m",
+    "Farm Details": "$61.08k",
+    "Steps": [
+      "Lend USDC as collateral on aave-v3 which earns a Supply APY of 3.30%.",
+      "Borrow GNO against your USDC collateral with a max LTV of 65% and a borrow APY of -2.64% (The interest you need to pay).",
+      "Swap borrowed GNO for",
+      "Farm with on aura which earns 51.53%."
+    ],
+    "Strategy APY Calculation": "3.30% -2.64% * 0.65 + 51.53% * 0.65 = 34.98%"  
   }
 ]
