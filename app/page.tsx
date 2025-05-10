@@ -7,8 +7,6 @@ import { AIChat } from "./components/AIChat";
 export default function HomePage() {
   const [selectedSafe, setSelectedSafe] = useState<string | null>(null);
 
-  console.log("Selected Safe:", selectedSafe);
-
   return (
     <div style={{ display: "flex", gap: "24px", padding: "24px" }}>
       <div style={{ flex: "1" }}>
@@ -17,7 +15,7 @@ export default function HomePage() {
           selectedSafe={selectedSafe}
         />
       </div>
-      <div style={{ flex: "2" }}>
+      <div style={{ flex: "3" }}>
         {selectedSafe && <AIChat safeAddress={selectedSafe} />}
       </div>
     </div>

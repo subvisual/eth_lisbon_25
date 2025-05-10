@@ -1,81 +1,70 @@
-import { Message } from 'ai';
-import { NextResponse } from 'next/server';
-import { StreamingTextResponse } from '@/lib/ai-utils';
-import { ollamaChat } from '@/lib/yield_strategist/api/ollama';
+import { openai } from '@ai-sdk/openai';
+import { generateText, tool } from 'ai';
+import { z } from 'zod';
+import { getGnosisYield, checkSafeBalances } from '@/lib/yield_strategist/ollama/tools';
+
+const strategistTools = {
+  getGnosisYield: tool({
+    description: 'Gets yields for liquidity pools on gnosis.',
+    parameters: z.object({}),
+    execute: async () => JSON.parse(await getGnosisYield()),
+  }),
+  checkSafeBalances: tool({
+    description: 'Displays the balances of the currently selected safe.',
+    parameters: z.object({
+      addr: z.string().describe('The ethereum vault address.'),
+    }),
+    execute: async ({ addr }) => JSON.parse(await checkSafeBalances({ addr })),
+  }),
+};
+
+// type OpenAIChatModelId = 'o1' | 'o1-2024-12-17' | 'o1-mini' | 'o1-mini-2024-09-12' | 'o1-preview' | 'o1-preview-2024-09-12' | 'o3-mini' | 'o3-mini-2025-01-31' | 'o3' | 'o3-2025-04-16' | 'o4-mini' | 'o4-mini-2025-04-16' | 'gpt-4.1' | 'gpt-4.1-2025-04-14' | 'gpt-4.1-mini' | 'gpt-4.1-mini-2025-04-14' | 'gpt-4.1-nano' | 'gpt-4.1-nano-2025-04-14' | 'gpt-4o' | 'gpt-4o-2024-05-13' | 'gpt-4o-2024-08-06' | 'gpt-4o-2024-11-20' | 'gpt-4o-audio-preview' | 'gpt-4o-audio-preview-2024-10-01' | 'gpt-4o-audio-preview-2024-12-17' | 'gpt-4o-search-preview' | 'gpt-4o-search-preview-2025-03-11' | 'gpt-4o-mini-search-preview' | 'gpt-4o-mini-search-preview-2025-03-11' | 'gpt-4o-mini' | 'gpt-4o-mini-2024-07-18' | 'gpt-4-turbo' | 'gpt-4-turbo-2024-04-09' | 'gpt-4-turbo-preview' | 'gpt-4-0125-preview' | 'gpt-4-1106-preview' | 'gpt-4' | 'gpt-4-0613' | 'gpt-4.5-preview' | 'gpt-4.5-preview-2025-02-27' | 'gpt-3.5-turbo-0125' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-1106' | 'chatgpt-4o-latest' | (string & {});
+
+const minModel = openai('gpt-4.1-mini');
+const nanoModel = openai('gpt-4.1-nano');
 
 export async function POST(req: Request) {
-  try {
-    const { messages } = await req.json() as { messages: Message[] };
-    
-    // Create a streaming text encoder
-    const encoder = new TextEncoder();
+  const { messages } = await req.json();
+  const encoder = new TextEncoder();
 
-    const ollamaToolsChatMessages = await ollamaChat(messages) as Message[];
-    
-    // Create a stream from the Ollama API
-    const stream = new ReadableStream({
-      async start(controller) {
-        // Create fetch request to Ollama API
-        const response = await fetch('http://localhost:11434/api/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            model: '0xroyce/Plutus-3B',
-            messages: ollamaToolsChatMessages.map(m => ({
-              role: m.role,
-              content: m.content,
-            })),
-            stream: true,
-          }),
-        });
-
-        if (!response.body) {
-          controller.error(new Error('No response body from Ollama'));
-          return;
-        }
-
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-
-        try {
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            // Parse the chunk
-            const chunk = decoder.decode(value);
-            const lines = chunk.split('\n').filter(line => line.trim());
-            
-            for (const line of lines) {
-              try {
-                const json = JSON.parse(line);
-                if (json.message?.content) {
-                  // Format as SSE message
-                  const sseMessage = `data: ${JSON.stringify({ content: json.message.content })}\n\n`;
-                  controller.enqueue(encoder.encode(sseMessage));
-                }
-              } catch (e) {
-                console.error('Error parsing JSON from Ollama:', e);
-              }
-            }
-          }
-          
-          // Signal completion
-          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
-          controller.close();
-        } catch (error) {
-          console.error('Error processing Ollama stream:', error);
-          controller.error(error);
-        }
+  const result = await generateText({
+    model: nanoModel,
+    messages,
+    tools: strategistTools,
+    maxSteps: 5,
+    toolChoice: 'auto',
+  });
+  
+  // Extract tool calls and results from steps
+  let extractedToolCalls = [];
+  let extractedToolResults = [];
+  
+  // If steps array exists and has entries
+  if (result.steps && result.steps.length > 0) {
+    for (const step of result.steps) {
+      // Collect tool calls from step
+      if (step.toolCalls && step.toolCalls.length > 0) {
+        extractedToolCalls = extractedToolCalls.concat(step.toolCalls);
       }
-    });
-
-    // Return the streaming response
-    return new StreamingTextResponse(stream);
-  } catch (error) {
-    console.error('Error in chat API:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+      
+      // Collect tool results from step
+      if (step.toolResults && step.toolResults.length > 0) {
+        extractedToolResults = extractedToolResults.concat(step.toolResults);
+      }
+    }
   }
+
+  // Create a Response with both the text result and extracted tool data
+  return new Response(
+    JSON.stringify({
+      content: result.text,
+      toolCalls: extractedToolCalls,
+      toolResults: extractedToolResults
+    }),
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
 } 
