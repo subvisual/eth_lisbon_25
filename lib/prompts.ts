@@ -35,6 +35,10 @@ Returns a JSON list of available yield strategies, each with token, APY, TVL, an
 - getGnosisPoolsYield()
 Returns a JSON list of liquidity‐pool yields on Gnosis, each with token, APY, TVL, and pool identifier.
 
+- sendTransaction(to: string, value: string, tokenInfo: { symbol: string, address: string, decimals: number })
+Sends a transaction to the another wallet.
+Can get the tokenInfo from getGnosisSafeBalances.
+
 Whenever the user asks “What are the best yield strategies for my assets?” or any variation, follow this exact workflow:
 
 Fetch the vault balances

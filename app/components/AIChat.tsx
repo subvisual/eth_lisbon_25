@@ -7,7 +7,7 @@ import { GnosisYieldTable } from "./GnosisYieldTable";
 import { SafeBalancesCard } from "./SafeBalancesCard";
 const { Text } = Typography;
 import { SYSTEM_PROMPT } from "../../lib/prompts";
-
+import { Transaction } from "./Transaction";
 type ToolCall = {
   id: string;
   type: string;
@@ -39,6 +39,15 @@ const ToolResultRenderer = ({ toolResult }: { toolResult: ToolResult }) => {
     return <GnosisYieldTable yieldData={toolResult.result} />;
   } else if (toolResult.toolName === "getGnosisSafeBalances") {
     return <SafeBalancesCard data={toolResult.result} />;
+  } else if (toolResult.toolName === "sendTransaction") {
+    return (
+      <Transaction
+        to={toolResult.result.to}
+        value={toolResult.result.value}
+        contractAddress={toolResult.result.contractAddress}
+        decimals={toolResult.result.decimals}
+      />
+    );
   } else if (toolResult.toolName === "getYieldStrategies") {
     return null;
   } else if (toolResult.toolName === "getGnosisPoolsYield") {
@@ -184,6 +193,8 @@ export const AIChat = ({ safeAddress }: { safeAddress: string }) => {
           dataSource={messages.filter((m) => m.role !== "system")}
           renderItem={(message) => {
             const isUser = message.role === "user";
+            const lastToolResult =
+              message.toolResults?.[message.toolResults.length - 1];
 
             return (
               <List.Item
@@ -196,24 +207,19 @@ export const AIChat = ({ safeAddress }: { safeAddress: string }) => {
                 }}
               >
                 <Flex vertical style={{ width: "100%" }}>
-                  {/* Render tool results when available */}
-                  {!isUser &&
-                    message.toolResults &&
-                    message.toolResults.length > 0 && (
-                      <div
-                        style={{
-                          marginTop: 8,
-                          borderRadius: 8,
-                        }}
-                      >
-                        {message.toolResults.map((toolResult) => (
-                          <ToolResultRenderer
-                            key={toolResult.toolCallId}
-                            toolResult={toolResult}
-                          />
-                        ))}
-                      </div>
-                    )}
+                  {!isUser && lastToolResult && (
+                    <div
+                      style={{
+                        marginTop: 8,
+                        borderRadius: 8,
+                      }}
+                    >
+                      <ToolResultRenderer
+                        key={lastToolResult.toolCallId}
+                        toolResult={lastToolResult}
+                      />
+                    </div>
+                  )}
 
                   <Text strong style={{ marginTop: 28 }}>
                     {isUser ? "You" : "Assistant"}
