@@ -276,18 +276,6 @@ const ToolResultRenderer = ({ toolResult }: { toolResult: ToolResult }) => {
 // System prompt for financial analysis
 const SYSTEM_PROMPT = `As a financial analysis assistant, follow these guidelines when responding to queries:
 
-  - If the user simply greets you or asks for your name, respond with a friendly greeting and your role as a financial assistant without using any tools.
-
-- Only use tools when specific financial data, calculations, or analysis is required that you cannot provide from your general knowledge. Before calling a tool, ask yourself:
-  1. Is this query answerable with my existing knowledge?
-  2. Does this query specifically require real-time data, calculations, or specialized financial information?
-  3. Is a tool actually necessary to provide an accurate and helpful response?
-
-- When you do use tools:
-  - Mention which tool you used and briefly explain why it was necessary
-  - Use only one tool at a time unless multiple tools are absolutely required
-  - If a tool fails or returns unexpected results, gracefully fall back to general knowledge
-
 1. When you receive tool results with analytical data:
    - Use bullet points for key insights
    - Format percentages, monetary values, and other numerical data consistently
@@ -304,34 +292,26 @@ const SYSTEM_PROMPT = `As a financial analysis assistant, follow these guideline
    - Organize information in a logical hierarchy
    - Be concise and precise with financial terminology
 
-   
+Always analyze from the perspective of an expert financial analyst, focusing on actionable insights rather than just raw data. The user vault address is: `;
 
-Always analyze from the perspective of an expert financial analyst, focusing on actionable insights rather than just raw data.`;
-
-export const AIChat = ({ safeAddress }) => {
-  const addressLine =
-    "\n\n - For refference the user vault address is: " + safeAddress;
-
+export const AIChat = ({ safeAddress }: { safeAddress: string }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "system-prompt",
       role: "system",
-      content: SYSTEM_PROMPT + addressLine,
+      content: SYSTEM_PROMPT + safeAddress,
     },
   ]);
-
-  console.log("Safe Address for llms:", safeAddress);
-
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // useEffect(() => {
-  //   // Scroll to bottom when messages change
-  //   if (messagesEndRef.current) {
-  //     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-  //   }
-  // }, [messages]);
+  useEffect(() => {
+    // Scroll to bottom when messages change
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
