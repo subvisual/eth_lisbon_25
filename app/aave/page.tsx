@@ -1,7 +1,7 @@
-import Aave from '@/app/components/Aave';
+import Aave from "@/app/components/Aave";
 
 export const metadata = {
-  title: 'Aave V3 | Gnosis Dapp Boilerplate',
+  title: "Aave V3 | Gnosis Dapp Boilerplate",
 };
 
 export default function AavePage() {
