@@ -5,19 +5,11 @@ import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
 import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 import { chiadoNetwork, sepoliaNetwork } from "./evmNetworks";
 
-import { http, createConfig } from "wagmi";
-import { sepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
+import { config as wagmiConfig } from "./wagmi";
 
 const queryClient = new QueryClient();
-
-export const config = createConfig({
-  chains: [sepolia],
-  transports: {
-    [sepolia.id]: http(),
-  },
-});
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   // ensure our API key is defined as a string
@@ -56,7 +48,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         },
       }}
     >
-      <WagmiProvider config={config}>
+      <WagmiProvider config={wagmiConfig}>
         <QueryClientProvider client={queryClient}>
           {children}
         </QueryClientProvider>
