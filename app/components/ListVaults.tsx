@@ -17,6 +17,7 @@ import {
 } from "antd";
 import { apiKit } from "@/lib/apiKit";
 import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
+import { useSafe } from "@/lib/providers";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -155,15 +156,10 @@ const SafeInfo = ({ safeAddress }: { safeAddress: string }) => {
   );
 };
 
-export const ListVaults = ({
-  setSelectedSafe,
-  selectedSafe,
-}: {
-  setSelectedSafe: (safe: string) => void;
-  selectedSafe: string | undefined;
-}) => {
+export const ListVaults = () => {
   const { address, isConnected } = useAccount();
   const [safes, setSafes] = useState<string[]>([]);
+  const { selectedSafe, setSelectedSafe } = useSafe();
 
   useEffect(() => {
     const fetchSafes = async () => {

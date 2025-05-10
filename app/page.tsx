@@ -1,23 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
-import { ListVaults } from "./components/ListVaults";
+import React from "react";
 import { AIChat } from "./components/AIChat";
+import { useSafe } from "@/lib/providers";
 
 export default function HomePage() {
-  const [selectedSafe, setSelectedSafe] = useState<string | undefined>();
+  const { selectedSafe } = useSafe();
 
-  return (
-    <div style={{ display: "flex", gap: "24px", padding: "24px" }}>
-      <div style={{ flex: "1" }}>
-        <ListVaults
-          setSelectedSafe={setSelectedSafe}
-          selectedSafe={selectedSafe}
-        />
-      </div>
-      <div style={{ flex: "3" }}>
-        {selectedSafe && <AIChat safeAddress={selectedSafe} />}
-      </div>
-    </div>
-  );
+  if (!selectedSafe) {
+    return null;
+  }
+
+  return <AIChat safeAddress={selectedSafe} />;
 }

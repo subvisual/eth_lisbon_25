@@ -4,6 +4,7 @@ import React from "react";
 import { Layout, ConfigProvider } from "antd";
 import AppHeader from "./AppHeader";
 import Providers from "@/lib/providers";
+import { ListVaults } from "./ListVaults";
 
 const { Content, Footer } = Layout;
 
@@ -19,7 +20,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           }}
         >
           <AppHeader />
-          <Content style={{ flex: 1, paddingInline: 16 }}>{children}</Content>
+          <Content style={{ flex: 1, paddingInline: 16 }}>
+            <div style={{ display: "flex", gap: "24px", padding: "24px" }}>
+              <div style={{ flex: "1" }}>
+                <ListVaults />
+              </div>
+              <div style={{ flex: "3" }}>{children}</div>
+            </div>
+          </Content>
           <Footer style={{ textAlign: "center" }}>
             © {new Date().getFullYear()} Subvisual • Built with ❤️ & redbull
           </Footer>
