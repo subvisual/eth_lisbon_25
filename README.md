@@ -1,5 +1,6 @@
 ![Hero Image](/hero.png)
-# Gnosis Dapp Boilerplate
+
+# Subvisual eth lisbon 25
 
 A boilerplate to kickstart your Gnosis Chain dApp development. This starter kit includes:
 
@@ -11,7 +12,7 @@ A boilerplate to kickstart your Gnosis Chain dApp development. This starter kit 
 
 ## 📦 Tech Stack
 
-- **Framework**: Next.js 13 
+- **Framework**: Next.js 13
 - **UI Library**: React + Ant Design
 - **Wallet & Auth**: Dynamic Labs SDK (`@dynamic-labs/sdk-react-core`, `@dynamic-labs/ethers-v6`, `@dynamic-labs/ethereum`)
 - **Blockchain**: Gnosis Chain via `ethers` & `viem`
@@ -62,6 +63,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 npm run build       # builds the optimized production bundle
 npm run start       # starts the production server
 ```
+
 ---
 
 ## 🤝 Contributing
@@ -79,4 +81,3 @@ Please follow the existing coding style and ensure all new features are covered 
 ## 📄 License
 
 Distributed under the **MIT License**. See [LICENSE](./LICENSE) for more information.
-

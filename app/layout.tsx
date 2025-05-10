@@ -7,8 +7,8 @@ import "@rainbow-me/rainbowkit/styles.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Gnosis Dapp Boilerplate",
-  description: "Production‑ready Next.js starter for Gnosis Chain",
+  title: "Subvisual Smart Gnosis Safe",
+  description: "Subvisual ETH Lisbon 25 - Smart Gnosis Safe",
   icons: {
     icon: "/icon.jpg",
     shortcut: "/icon.jpg",

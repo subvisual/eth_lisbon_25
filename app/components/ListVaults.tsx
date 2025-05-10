@@ -113,9 +113,6 @@ const SafeInfo = ({ safeAddress }: { safeAddress: string }) => {
       <Card title="Safe Information" bordered={false}>
         <Flex vertical gap={8}>
           <Text>
-            <Text strong>Address:</Text> {safeInfo?.address}
-          </Text>
-          <Text>
             <Text strong>Owners:</Text> {safeInfo?.owners?.join(", ")}
           </Text>
           <Text>
@@ -124,7 +121,7 @@ const SafeInfo = ({ safeAddress }: { safeAddress: string }) => {
         </Flex>
       </Card>
 
-      {balances.length > 0 && (
+      {balances.length > 0 ? (
         <Card
           title="Token Balances"
           bordered={false}
@@ -148,6 +145,10 @@ const SafeInfo = ({ safeAddress }: { safeAddress: string }) => {
               </Col>
             ))}
           </Row>
+        </Card>
+      ) : (
+        <Card title="No Balances" bordered={false}>
+          <Text>No balances found for this safe.</Text>
         </Card>
       )}
     </Flex>
