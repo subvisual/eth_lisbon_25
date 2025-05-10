@@ -11,11 +11,12 @@
   },
   "dependencies": {
     "@ai-sdk/react": "^1.2.12",
-    "@dynamic-labs/ethereum": "*",
+    "@dynamic-labs/ethereum": "^4.18.2",
     "@dynamic-labs/ethers-v6": "*",
-    "@dynamic-labs/sdk-react-core": "*",
+    "@dynamic-labs/sdk-react-core": "^4.18.2",
     "@safe-global/api-kit": "^3.0.1",
     "@shutter-network/shutter-sdk": "^0.0.1",
+    "@tanstack/react-query": "^5.75.7",
     "ai": "^4.3.15",
     "antd": "^5.24.7",
     "encoding": "^0.1.13",
@@ -26,6 +27,8 @@
     "react": "^18",
     "react-dom": "^18",
     "react-markdown": "^10.1.0",
+    "viem": "^2.29.1",
+    "wagmi": "^2.15.2",
     "zod-to-json-schema": "^3.24.5"
   },
   "devDependencies": {
