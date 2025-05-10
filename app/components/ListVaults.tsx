@@ -96,10 +96,12 @@ const SafeInfo = ({ safeAddress }: { safeAddress: string }) => {
   const [balances, setBalances] = useState<SafeBalanceItem[]>([]);
   const [fiatTotal, setFiatTotal] = useState<string | null>(null);
 
+  const { chain } = useAccount();
+
   useEffect(() => {
     const fetchSafeInfo = async () => {
       const response = await apiKit.getSafeInfo(safeAddress);
-      const balancesResponse = await getSafeBalances(safeAddress);
+      const balancesResponse = await getSafeBalances(safeAddress, chain.id);
 
       setSafeInfo(response);
       setBalances(balancesResponse.items || []);
@@ -107,7 +109,7 @@ const SafeInfo = ({ safeAddress }: { safeAddress: string }) => {
     };
 
     fetchSafeInfo();
-  }, [safeAddress]);
+  }, [safeAddress, chain.id]);
 
   return (
     <Flex vertical gap={24}>
