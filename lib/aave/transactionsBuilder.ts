@@ -52,6 +52,28 @@ export const transferErc20TxBuilder = (
 	return transferErc20Tx;
 };
 
+export const transferFromErc20TxBuilder = (
+	tokenAddress: string,
+	fromAddress: string,
+	toAddress: string,
+	amount: string,
+) => {
+	const transferFromErc20TxData = encodeFunctionData({
+		functionName: "transferFrom",
+		args: [fromAddress, toAddress, amount],
+		abi: erc20Abi,
+	});
+
+	const transferFromErc20Tx: MetaTransaction = {
+		to: tokenAddress,
+		data: transferFromErc20TxData,
+		value: BigInt(0),
+		operation: 0,
+	};
+
+	return transferFromErc20Tx;
+};
+
 export const aaveSupplyTxBuilder = (
 	aavePoolV3Address: string,
 	supplyTokenAddress: string,

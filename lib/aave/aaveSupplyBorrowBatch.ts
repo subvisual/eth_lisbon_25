@@ -1,93 +1,67 @@
 import addresses from "@/app/constants/adresses.json";
-import {
-	encodeAbiParameters,
-	encodeFunctionData,
-	parseAbiParameters,
-} from "viem";
+import { encodeFunctionData } from "viem";
 import { multiSendAbi } from "@/app/constants/abi/multiSend";
-import { safeAccountAbi } from "@/app/constants/abi/safeAccount";
 import { ethers } from "ethers";
 import {
-	approveErc20TxBuilder,
 	aaveSupplyTxBuilder,
 	aaveBorrowTxBuilder,
 	type MetaTransaction,
-  transferErc20TxBuilder,
+	transferFromErc20TxBuilder,
 } from "./transactionsBuilder";
+import { useAccount } from "wagmi";
+import type { FormValues } from "@/app/components/Aave";
 
-export const transactionBuilder = () => {
+export const aaveSupplyBorrowBatch = (values: FormValues) => {
 	const safeAddress = addresses.safeAddress;
 	const aavePoolV3Address = addresses.aavePoolV3Address;
-	const supplyTokenAddress = addresses.supplyAddress;
-	const borrowTokenAddress = addresses.borrowAddress;
-	const multiSendAddress = addresses.multiSendAddress;
-	const userAddress = addresses.userAddress;
-	const userAddressSignature = addresses.userAddressSignature as `0x${string}`;
-	const nullAddress = "0x0000000000000000000000000000000000000000";
-	
-  // const addressSignature = encodeAbiParameters(
-	//   parseAbiParameters('address user, bool approved'),
-	//   [addresses.userAddress, true]
-	// );
+	const supplyTokenAddress = values.supplyAddress;
+	const supplyTokenDecimals = 18;
+	const borrowTokenAddress = values.borrowAddress;
+	const borrowTokenDecimals = 6;
+	const account = useAccount();
 
-	const aproveErc20Tx = approveErc20TxBuilder(
-		safeAddress,
+	if (!account.address) {
+		throw new Error("Account not found");
+	}
+
+	const supplyAmount = (
+		values.supplyAmount *
+		10 ** supplyTokenDecimals
+	).toString();
+	const borrowAmount = (
+		values.borrowAmount *
+		10 ** borrowTokenDecimals
+	).toString();
+
+	const transferFromErc20Tx = transferFromErc20TxBuilder(
 		supplyTokenAddress,
-		"1000000000000000000",
+		account.address,
+		safeAddress,
+		supplyAmount,
 	);
-
 	const aaveSupplyTx = aaveSupplyTxBuilder(
 		aavePoolV3Address,
 		supplyTokenAddress,
 		safeAddress,
-		"100000000000000000",
+		supplyAmount,
 	);
-
 	const aaveBorrowTx = aaveBorrowTxBuilder(
 		aavePoolV3Address,
 		borrowTokenAddress,
 		safeAddress,
-		"10000000",
+		borrowAmount,
 	);
-
-	const safeTxs = [aproveErc20Tx, aaveSupplyTx, aaveBorrowTx];
+	const safeTxs = [transferFromErc20Tx, aaveSupplyTx, aaveBorrowTx];
 
 	const encodedSafeMultiSend = encodeMultiSend(safeTxs);
-  console.log("encodedSafeMultiSend", encodedSafeMultiSend);
 
-	const safeExecuteTxData = encodeFunctionData({
-		functionName: "execTransaction",
-		args: [
-			multiSendAddress,
-			BigInt(0),
-			encodedSafeMultiSend as `0x${string}`,
-			1,
-			BigInt(0),
-			BigInt(0),
-			BigInt(0),
-			nullAddress,
-			nullAddress,
-			userAddressSignature,
-		],
-		abi: safeAccountAbi,
+	const safeMultiSendData = encodeFunctionData({
+		functionName: "multiSend",
+		args: [encodedSafeMultiSend as `0x${string}`],
+		abi: multiSendAbi,
 	});
 
-  const safeExecuteTx: MetaTransaction = {
-    to: safeAddress,
-    data: safeExecuteTxData,
-    value: BigInt(0),
-    operation: 1,
-  };
-
-  const transferErc20Tx = transferErc20TxBuilder(
-    supplyTokenAddress,
-    safeAddress,
-    "100000000000000000",
-  );
-  
-  const encodedMultiSendTx = encodeMultiSend([transferErc20Tx, safeExecuteTx]);
-  
-	return { encodedMultiSendTx };
+	return { safeMultiSendData };
 };
 
 export const encodeMultiSend = (txs: MetaTransaction[]): string => {

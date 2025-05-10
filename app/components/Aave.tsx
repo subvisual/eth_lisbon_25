@@ -15,9 +15,7 @@ const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-import { aavePoolV3Abi } from "../constants/abi/aavePoolV3";
 import { uiPoolDataProviderAbi } from "../constants/abi/uiPoolDataProvider";
-import { walletBalanceProviderAbi } from "../constants/abi/walletBalanceProviderAbi";
 import { erc20Abi } from "../constants/abi/erc20";
 
 import {
@@ -27,8 +25,18 @@ import {
   usePublicClient,
 } from "wagmi";
 import { useState, useEffect } from "react";
+import { aaveSupplyBorrowBatch } from "@/lib/aave/aaveSupplyBorrowBatch";
+import addresses from "@/app/constants/adresses.json";
+import { safeAccountAbi } from "../constants/abi/safeAccount";
 
 const POOL_ADDRESSES_PROVIDER = "0x012bAC54348C0E635dCAc9D5FB99f06F24136C9A";
+
+export interface FormValues {
+  supplyAddress: string;
+  supplyAmount: number;
+  borrowAddress: string;
+  borrowAmount: number;
+}
 
 export default function Aave() {
   const { address, isConnected } = useAccount();
@@ -91,22 +99,36 @@ export default function Aave() {
   const getAvailableAmount = (tokenAddress: string, decimals: number) => {
     const bal = tokenBalances[tokenAddress];
     if (!bal) return "0";
-    return (Number(bal) / Math.pow(10, decimals)).toFixed(4);
+    return (Number(bal) / 10 ** decimals).toFixed(4);
   };
 
-  const onSubmit = async (values: any) => {
-    console.log("reservesList2", reserves);
-    console.log("userBalances2", tokenBalances);
+  const onSubmit = async (values: FormValues) => {
+    console.log("values", values);
 
     writeContract({
-      abi: aavePoolV3Abi,
-      address: "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
-      functionName: "supply",
+      abi: erc20Abi,
+      address: values.supplyAddress,
+      functionName: "approve",
+      args: [addresses.safeAddress, BigInt(values.supplyAmount * 10 ** 18)],
+    });
+
+    const { safeMultiSendData } = aaveSupplyBorrowBatch(values);
+
+    writeContract({
+      abi: safeAccountAbi,
+      address: addresses.safeAddress,
+      functionName: "execTransaction",
       args: [
-        "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
-        BigInt(10),
-        "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
-        0,
+        addresses.multiSendAddress,
+        BigInt(0),
+        safeMultiSendData,
+        1,
+        BigInt(0),
+        BigInt(0),
+        BigInt(0),
+        addresses.nullAddress,
+        addresses.nullAddress,
+        addresses.userAddressSignature,
       ],
     });
   };
@@ -154,7 +176,7 @@ export default function Aave() {
           >
             <Title level={5}>Supply</Title>
 
-            <Form.Item label="Asset to Supply" name="lendAsset">
+            <Form.Item label="Asset to Supply" name="supplyAddress">
               <Select placeholder="Select asset" optionLabelProp="label">
                 {reserves &&
                   reserves[0]
@@ -172,12 +194,12 @@ export default function Aave() {
                           }}
                         >
                           <span>{token.symbol}</span>
-                          <span style={{ color: "#888" }}>
+                          {/* <span style={{ color: "#888" }}>
                             {getAvailableAmount(
                               token.underlyingAsset,
                               token.decimals
                             )}
-                          </span>
+                          </span> */}
                         </div>
                       </Option>
                     ))}
@@ -186,11 +208,11 @@ export default function Aave() {
 
             <Form.Item
               label="Amount to Supply"
-              name="lendAmount"
+              name="supplyAmount"
               rules={[
                 {
                   required: true,
-                  message: "Please input the amount to lend",
+                  message: "Please input the amount to supply",
                 },
               ]}
             >
@@ -201,7 +223,7 @@ export default function Aave() {
 
             <Title level={5}>Borrow</Title>
 
-            <Form.Item label="Asset to Borrow" name="borrowAsset">
+            <Form.Item label="Asset to Borrow" name="borrowAddress">
               <Select placeholder="Select asset">
                 {reserves &&
                   reserves[0]
