@@ -15,12 +15,15 @@
     "@dynamic-labs/sdk-react-core": "*",
     "@safe-global/api-kit": "^3.0.1",
     "@shutter-network/shutter-sdk": "^0.0.1",
+    "@tanstack/react-query": "^5.75.7",
     "antd": "^5.24.7",
     "encoding": "^0.1.13",
     "next": "13.5.11",
     "pino-pretty": "^13.0.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "viem": "^2.29.1",
+    "wagmi": "^2.15.2"
   },
   "devDependencies": {
     "@types/node": "^20",

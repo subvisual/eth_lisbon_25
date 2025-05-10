@@ -20,8 +20,11 @@ import { getContract } from "viem";
 import { aavePoolV3Abi } from "../constants/abi/aavePoolV3";
 import { erc20Abi } from "../constants/abi/erc20";
 
+import { useWriteContract } from "wagmi";
+
 export default function Aave() {
   const { primaryWallet } = useDynamicContext();
+  const { writeContract } = useWriteContract();
 
   const [form] = Form.useForm();
 
@@ -62,6 +65,18 @@ export default function Aave() {
     );
 
     console.log(reserves);
+
+    const result = writeContract({
+      abi: aavePoolV3Abi,
+      address: "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
+      functionName: "supply",
+      args: [
+        "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
+        BigInt(10),
+        "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
+        0,
+      ],
+    });
   };
 
   return (
