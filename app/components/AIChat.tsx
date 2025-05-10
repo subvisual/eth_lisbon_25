@@ -67,7 +67,7 @@ const GnosisYieldTable = ({ yieldData }: { yieldData: any[] }) => {
       key: "apy",
       render: (_, record: any) => {
         const apy = record.apy ?? record.apyBase ?? 0;
-        return `${(apy * 100).toFixed(2)}%`;
+        return `$${apy.toFixed(2)}`;
       },
       sorter: (a: any, b: any) =>
         (a.apy ?? a.apyBase ?? 0) - (b.apy ?? b.apyBase ?? 0),
@@ -90,7 +90,7 @@ const GnosisYieldTable = ({ yieldData }: { yieldData: any[] }) => {
         return (
           <Text type={isPositive ? "success" : "danger"}>
             {isPositive ? "+" : ""}
-            {(change * 100).toFixed(2)}%
+            {change.toFixed(2)}%
           </Text>
         );
       },
