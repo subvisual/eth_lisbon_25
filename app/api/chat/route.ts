@@ -32,9 +32,12 @@ const strategistTools = {
     execute: async () => JSON.parse(await getYieldStrategies()),
   }),
   sendTransaction: tool({
-    description: "Sends a transaction to the another wallet.",
+    description:
+      "Sends a transaction to the another wallet, vault, or contract.",
     parameters: z.object({
-      to: z.string().describe("The address to send the transaction to."),
+      to: z
+        .string()
+        .describe("The address to send the transaction to (recipient)."),
       value: z.string().describe("The value of the transaction."),
       tokenInfo: z.object({
         symbol: z.string().describe("The symbol of the token."),
