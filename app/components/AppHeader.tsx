@@ -43,19 +43,11 @@ export default function AppHeader() {
     },
     {
       label: (
-        <Link href="/deploy-token" style={navLinkStyle}>
-          Token Deployment
+        <Link href="/bridging" style={navLinkStyle}>
+          Bridging
         </Link>
       ),
-      key: "token",
-    },
-    {
-      label: (
-        <Link href="/shutter-rps" style={navLinkStyle}>
-          Shutter
-        </Link>
-      ),
-      key: "rps",
+      key: "bridging",
     },
     {
       label: (
