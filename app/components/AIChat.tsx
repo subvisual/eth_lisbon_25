@@ -9,17 +9,14 @@ import {
   Typography,
   Flex,
   Spin,
-  Table,
-  Avatar,
-  Statistic,
-  Tag,
   Row,
   Col,
+  Statistic,
 } from "antd";
 import ReactMarkdown from "react-markdown";
-import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
-
-const { Text, Title } = Typography;
+import { GnosisYieldTable } from "./GnosisYieldTable";
+import { TokenCard } from "./TokenCard";
+const { Text } = Typography;
 
 type ToolCall = {
   id: string;
@@ -44,176 +41,6 @@ type Message = {
   content: string;
   toolCalls?: ToolCall[];
   toolResults?: ToolResult[];
-};
-
-// Helper components for rendering specific tool results
-const GnosisYieldTable = ({ yieldData }: { yieldData: any[] }) => {
-  const [showAll, setShowAll] = useState(false);
-  const displayData = showAll ? yieldData : yieldData.slice(0, 10);
-
-  const columns = [
-    {
-      title: "Asset",
-      key: "asset",
-      render: (_, record: any) => (
-        <Flex align="center">
-          <Text strong>{record.symbol || "Unknown"}</Text>
-          {record.poolMeta && <Tag color="blue">{record.poolMeta}</Tag>}
-        </Flex>
-      ),
-    },
-    {
-      title: "APY",
-      key: "apy",
-      render: (_, record: any) => {
-        const apy = record.apy ?? record.apyBase ?? 0;
-        return `$${apy.toFixed(2)}`;
-      },
-      sorter: (a: any, b: any) =>
-        (a.apy ?? a.apyBase ?? 0) - (b.apy ?? b.apyBase ?? 0),
-    },
-    {
-      title: "TVL",
-      dataIndex: "tvlUsd",
-      key: "tvl",
-      render: (tvl: number | null) =>
-        tvl != null ? `$${tvl.toLocaleString()}` : "-",
-      sorter: (a: any, b: any) => (a.tvlUsd ?? 0) - (b.tvlUsd ?? 0),
-    },
-    {
-      title: "7d Change",
-      key: "change7d",
-      render: (_, record: any) => {
-        const change = record.apyPct7D;
-        if (change == null) return "-";
-        const isPositive = change >= 0;
-        return (
-          <Text type={isPositive ? "success" : "danger"}>
-            {isPositive ? "+" : ""}
-            {change.toFixed(2)}%
-          </Text>
-        );
-      },
-      sorter: (a: any, b: any) => (a.apyPct7D ?? 0) - (b.apyPct7D ?? 0),
-    },
-    {
-      title: "Project",
-      dataIndex: "project",
-      key: "project",
-      render: (project: string | null) => project || "-",
-    },
-    {
-      title: "Prediction",
-      key: "prediction",
-      render: (_, record: any) => {
-        const prediction = record.predictions?.predictedClass;
-        const probability = record.predictions?.predictedProbability;
-
-        if (!prediction) return "-";
-
-        const color = prediction.includes("Up")
-          ? "green"
-          : prediction.includes("Down")
-          ? "red"
-          : "blue";
-
-        return (
-          <Tag color={color}>
-            {prediction} {probability ? `(${probability}%)` : ""}
-          </Tag>
-        );
-      },
-    },
-  ];
-
-  return (
-    <Card title="Gnosis Yield Opportunities" style={{ marginTop: 12 }}>
-      <Table
-        dataSource={displayData.map((item, index) => ({ ...item, key: index }))}
-        columns={columns}
-        size="small"
-        pagination={false}
-      />
-      {yieldData.length > 10 && (
-        <Button
-          type="link"
-          onClick={() => setShowAll(!showAll)}
-          style={{ marginTop: 12 }}
-        >
-          {showAll ? "Show Less" : `Show All (${yieldData.length})`}
-        </Button>
-      )}
-    </Card>
-  );
-};
-
-const TokenCard = ({ balance }: { balance: any }) => {
-  const formattedBalance = balance.tokenInfo?.decimals
-    ? (Number(balance.balance) / 10 ** balance.tokenInfo.decimals).toFixed(4)
-    : balance.balance;
-
-  const isPositiveChange = Number(balance.fiatBalance24hChange) >= 0;
-
-  return (
-    <Card
-      hoverable
-      style={{
-        marginBottom: 16,
-        borderRadius: 8,
-        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-      }}
-    >
-      <Flex align="center" gap={16}>
-        <Avatar
-          size={48}
-          src={balance.tokenInfo?.logoUri || undefined}
-          style={{
-            backgroundColor: !balance.tokenInfo?.logoUri
-              ? "#1890ff"
-              : undefined,
-          }}
-        >
-          {!balance.tokenInfo?.logoUri &&
-            (balance.tokenInfo?.symbol?.[0] || "T")}
-        </Avatar>
-
-        <Flex vertical flex={1}>
-          <Flex justify="space-between" align="center">
-            <Text strong>{balance.tokenInfo?.name || "Unknown Token"}</Text>
-            <Tag color="blue">{balance.tokenInfo?.symbol || "ETH"}</Tag>
-          </Flex>
-
-          <Flex justify="space-between" align="center" style={{ marginTop: 8 }}>
-            <Statistic
-              value={formattedBalance}
-              precision={4}
-              valueStyle={{ fontSize: 16 }}
-              suffix={balance.tokenInfo?.symbol || "ETH"}
-            />
-            {balance.fiatBalance && (
-              <Flex align="center">
-                <Text type="secondary">${balance.fiatBalance} USD</Text>
-              </Flex>
-            )}
-          </Flex>
-
-          {balance.fiatBalance24hChange && (
-            <Flex justify="flex-end" style={{ marginTop: 4 }}>
-              <Tag
-                color={isPositiveChange ? "success" : "error"}
-                icon={
-                  isPositiveChange ? <ArrowUpOutlined /> : <ArrowDownOutlined />
-                }
-              >
-                {isPositiveChange ? "+" : ""}
-                {balance.fiatBalance24hChange}% (24h)
-              </Tag>
-            </Flex>
-          )}
-        </Flex>
-      </Flex>
-    </Card>
-  );
 };
 
 const SafeBalancesCard = ({ data }: { data: any }) => {
