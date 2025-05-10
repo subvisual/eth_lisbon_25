@@ -16,6 +16,7 @@
     "@dynamic-labs/sdk-react-core": "^4.18.2",
     "@lifi/sdk": "^3.6.13",
     "@lifi/widget": "^3.20.4",
+    "@rainbow-me/rainbowkit": "^2.2.4",
     "@safe-global/api-kit": "^3.0.1",
     "@tanstack/react-query": "^5.75.7",
     "ai": "^4.3.15",
@@ -28,7 +29,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-markdown": "^10.1.0",
-    "viem": "^2.29.1",
+    "viem": "^2.29.2",
     "wagmi": "^2.15.2",
     "zod": "^3.24.4",
     "zod-to-json-schema": "^3.24.5"
