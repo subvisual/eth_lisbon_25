@@ -6,7 +6,7 @@ createConfig({
 })
 
 
-function createRouteRequest(fromChainId: number, toChainId: number, fromTokenAddress: string, toTokenAddress: string, fromAmount: string) {
+async function createRouteRequest(fromChainId: number, toChainId: number, fromTokenAddress: string, toTokenAddress: string, fromAmount: string) {
   const routesRequest: RoutesRequest = {
     fromChainId, 
     toChainId
