@@ -2,7 +2,6 @@
 
   import {
     Layout,
-    Typography,
     Form,
     InputNumber,
     Select,
@@ -11,8 +10,7 @@
     Space,
   } from "antd";
 
-  const { Header, Content } = Layout;
-  const { Title, Text } = Typography;
+  const { Content } = Layout;
   const { Option } = Select;
 
   import { uiPoolDataProviderAbi } from "../constants/abi/uiPoolDataProvider";
@@ -125,7 +123,7 @@
     };
 
     return (
-      <Layout style={{ minHeight: "500px", background: "#fafafa" }}>
+      <Layout style={{ minHeight: "600px", background: "#fafafa" }}>
         <Content
           style={{
             display: "flex",
@@ -172,7 +170,7 @@
                 rules={[
                   {
                     required: true,
-                    message: "Please input the amount to repay",
+                    message: "Please input the amount to Repay",
                   },
                 ]}
               >

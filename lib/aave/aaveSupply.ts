@@ -4,41 +4,40 @@ import { multiSendAbi } from "@/app/constants/abi/multiSend";
 import { ethers } from "ethers";
 import {
 	type MetaTransaction,
-    aaveRepayTxBuilder,
+    aaveSupplyTxBuilder,
     approveErc20TxBuilder,
 } from "./transactionsBuilder";
-import type { RepayFormValues } from "@/app/components/AaveRepay";
+import type { SupplyFormValues } from "@/app/components/AaveSupply";
 
-export const aaveRepay = (values: RepayFormValues, accountAddress: string) => {
+export const aaveSupply = (values: SupplyFormValues, accountAddress: string) => {
 	const safeAddress = addresses.safeAddress;
 	const aavePoolV3Address = addresses.aavePoolV3Address;
-	const repayTokenAddress = values.repayAddress;
-	const repayTokenDecimals = 6;
+	const supplyTokenAddress = values.supplyAddress;
+	const supplyTokenDecimals = 18;
 
 	if (!accountAddress) {
 		throw new Error("Account not found");
 	}
 
-	const repayAmount = (
-		values.repayAmount *
-		10 ** repayTokenDecimals
+	const supplyAmount = (
+		values.supplyAmount *
+		10 ** supplyTokenDecimals
 	).toString();
 
     const approveTx = approveErc20TxBuilder(
         aavePoolV3Address,
-        repayTokenAddress,
-        repayAmount,
+        supplyTokenAddress,
+        supplyAmount,
     );
 
-	const aaveRepayTx = aaveRepayTxBuilder(
+	const aaveSupplyTx = aaveSupplyTxBuilder(
 		aavePoolV3Address,
-		repayTokenAddress,
+		supplyTokenAddress,
 		safeAddress,
-		repayAmount,
+		supplyAmount,
 	);
 
-	console.log(aaveRepayTx.data);
-	const safeTxs = [approveTx, aaveRepayTx];
+	const safeTxs = [approveTx, aaveSupplyTx];
 
 	const encodedSafeMultiSend = encodeMultiSend(safeTxs);
 
