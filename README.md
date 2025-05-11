@@ -1,5 +1,5 @@
 
-# Cross-Chain Gnosis Pay & Agentic DeFi App
+# OK, Let's GNO - Cross-Chain Gnosis Pay & Agentic DeFi App
 
 A next-generation web3 application enabling seamless cross-chain top-ups for Gnosis Pay, unified Aave lending/borrowing, and AI-powered portfolio optimization.  
 Built for ETH Lisbon 2025.
