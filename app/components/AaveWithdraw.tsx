@@ -89,7 +89,7 @@ export default function AaveWithdraw() {
 
   const [form] = Form.useForm();
 
-  const onSubmit = async (values: BorrowFormValues) => {
+  const onSubmit = async (values: WithdrawFormValues) => {
     if (!address) {
         throw new Error("Account not connected");
     }
@@ -130,8 +130,8 @@ export default function AaveWithdraw() {
             form={form}
             onFinish={onSubmit}
             initialValues={{
-              repayAmount: 0,
-              repayAsset: "WETH",
+              withdrawAmount: 0,
+              withdrawAsset: "WETH",
             }}
           >
             <Form.Item label="Asset to Withdraw" name="withdrawAddress">
