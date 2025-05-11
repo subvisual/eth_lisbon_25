@@ -4,8 +4,7 @@ import {
 } from "./transactionsBuilder";
 import type { WithdrawFormValues } from "@/app/components/AaveWithdraw";
 
-export const aaveWithdraw = (values: WithdrawFormValues, accountAddress: string) => {
-	const safeAddress = addresses.safeAddress;
+export const aaveWithdraw = (values: WithdrawFormValues, accountAddress: string, safeAddress: string) => {
 	const aavePoolV3Address = addresses.aavePoolV3Address;
 	const withdrawTokenAddress = values.withdrawAddress;
 	const withdrawTokenDecimals = 18;

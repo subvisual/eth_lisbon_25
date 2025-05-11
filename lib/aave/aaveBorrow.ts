@@ -4,8 +4,7 @@ import {
 } from "./transactionsBuilder";
 import type { BorrowFormValues } from "@/app/components/AaveBorrow";
 
-export const aaveBorrow = (values: BorrowFormValues, accountAddress: string) => {
-	const safeAddress = addresses.safeAddress;
+export const aaveBorrow = (values: BorrowFormValues, accountAddress: string, safeAddress: string) => {
 	const aavePoolV3Address = addresses.aavePoolV3Address;
 	const borrowTokenAddress = values.borrowAddress;
 	const borrowTokenDecimals = 6;

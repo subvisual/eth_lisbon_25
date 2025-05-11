@@ -26,8 +26,9 @@ import { useState, useEffect } from "react";
 import addresses from "@/app/constants/adresses.json";
 import { safeAccountAbi } from "../constants/abi/safeAccount";
 import { aaveBorrow } from "@/lib/aave/aaveBorrow";
+import { userAddressSignature } from "@/lib/aave/transactionsBuilder";
 
-const POOL_ADDRESSES_PROVIDER = "0x012bAC54348C0E635dCAc9D5FB99f06F24136C9A";
+const POOL_ADDRESSES_PROVIDER = "0x36616cf17557639614c1cdDb356b1B83fc0B2132";
 
 export interface BorrowFormValues {
   borrowAddress: string;
@@ -49,9 +50,11 @@ export default function AaveBorrow() {
     [address: string]: bigint;
   }>({});
 
+  const { selectedSafe } = useSafe();
+
   const { data: reserves } = useReadContract({
     abi: uiPoolDataProviderAbi,
-    address: "0x69529987FA4A075D0C00B0128fa848dc9ebbE9CE",
+    address: "0x5598BbFA2f4fE8151f45bBA0a3edE1b54B51a0a9",
     functionName: "getReservesData",
     args: [POOL_ADDRESSES_PROVIDER],
   });
@@ -90,15 +93,15 @@ export default function AaveBorrow() {
   const [form] = Form.useForm();
 
   const onSubmit = async (values: BorrowFormValues) => {
-    if (!address) {
+    if (!address || !selectedSafe) {
         throw new Error("Account not connected");
     }
 
-    const { aaveBorrowTx } = aaveBorrow(values, address);
+    const { aaveBorrowTx } = aaveBorrow(values, address, selectedSafe);
 
     writeContract({
         abi: safeAccountAbi,
-        address: addresses.safeAddress,
+        address: selectedSafe,
         functionName: "execTransaction",
         args: [
             addresses.aavePoolV3Address,
@@ -110,7 +113,7 @@ export default function AaveBorrow() {
             BigInt(0),
             addresses.nullAddress,
             addresses.nullAddress,
-            addresses.userAddressSignature,
+            userAddressSignature(address),
         ],
     });
   };

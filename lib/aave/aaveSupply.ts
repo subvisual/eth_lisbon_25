@@ -8,8 +8,7 @@ import {
 } from "./transactionsBuilder";
 import type { SupplyFormValues } from "@/app/components/AaveSupply";
 
-export const aaveSupply = (values: SupplyFormValues, accountAddress: string) => {
-	const safeAddress = addresses.safeAddress;
+export const aaveSupply = (values: SupplyFormValues, accountAddress: string, safeAddress: string) => {
 	const aavePoolV3Address = addresses.aavePoolV3Address;
 	const supplyTokenAddress = values.supplyAddress;
 	const supplyTokenDecimals = 18;

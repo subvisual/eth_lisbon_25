@@ -174,3 +174,7 @@ export const encodeMetaTransaction = (tx: MetaTransaction): string => {
 	);
 	return encoded.slice(2);
 };
+
+export const userAddressSignature = (address: string) => {
+	return `0x000000000000000000000000${address.slice(2)}000000000000000000000000000000000000000000000000000000000000000001`;
+};

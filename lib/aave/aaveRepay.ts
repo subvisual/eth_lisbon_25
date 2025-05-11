@@ -8,8 +8,7 @@ import {
 } from "./transactionsBuilder";
 import type { RepayFormValues } from "@/app/components/AaveRepay";
 
-export const aaveRepay = (values: RepayFormValues, accountAddress: string) => {
-	const safeAddress = addresses.safeAddress;
+export const aaveRepay = (values: RepayFormValues, accountAddress: string, safeAddress: string) => {
 	const aavePoolV3Address = addresses.aavePoolV3Address;
 	const repayTokenAddress = values.repayAddress;
 	const repayTokenDecimals = 6;

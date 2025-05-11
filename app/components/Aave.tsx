@@ -31,6 +31,8 @@ import {
 import { useState, useEffect } from "react";
 import { aaveSupplyBorrowBatch } from "@/lib/aave/aaveSupplyBorrowBatch";
 import addresses from "@/app/constants/adresses.json";
+import { userAddressSignature } from "@/lib/aave/transactionsBuilder";
+import { useSafe } from "@/lib/providers";
 
 interface ReserveData {
   underlyingAsset: string;
@@ -46,7 +48,7 @@ interface ReservesResponse {
   [1]: any[]; // We don't need the second array for now
 }
 
-const POOL_ADDRESSES_PROVIDER = "0x012bAC54348C0E635dCAc9D5FB99f06F24136C9A";
+const POOL_ADDRESSES_PROVIDER = "0x36616cf17557639614c1cdDb356b1B83fc0B2132";
 
 export interface FormValues {
   supplyAddress: string;
@@ -64,17 +66,18 @@ export default function Aave() {
   }>({});
   const [selectedSupplyToken, setSelectedSupplyToken] =
     useState<ReserveData | null>(null);
+    const { selectedSafe } = useSafe();
 
   const { data: reserves } = useReadContract({
     abi: uiPoolDataProviderAbi,
-    address: "0x69529987FA4A075D0C00B0128fa848dc9ebbE9CE",
+    address: "0x5598BbFA2f4fE8151f45bBA0a3edE1b54B51a0a9",
     functionName: "getReservesData",
     args: [POOL_ADDRESSES_PROVIDER],
   }) as { data: ReservesResponse | undefined };
 
   const { data: userAccountData } = useReadContract({
     abi: aavePoolV3Abi,
-    address: "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
+    address: selectedSafe,
     functionName: "getUserAccountData",
     args: [address!],
   });
@@ -119,7 +122,7 @@ export default function Aave() {
   };
 
   const onSubmit = async (values: FormValues) => {
-    if (!address) {
+    if (!address || !selectedSafe) {
       throw new Error("Account not connected");
     }
 
@@ -127,14 +130,14 @@ export default function Aave() {
       abi: erc20Abi,
       address: values.supplyAddress,
       functionName: "approve",
-      args: [addresses.safeAddress, BigInt(values.supplyAmount * 10 ** 18)],
+      args: [selectedSafe, BigInt(values.supplyAmount * 10 ** 18)],
     });
 
-    const { safeMultiSendData } = aaveSupplyBorrowBatch(values, address);
+    const { safeMultiSendData } = aaveSupplyBorrowBatch(values, address, selectedSafe);
 
     writeContract({
       abi: safeAccountAbi,
-      address: addresses.safeAddress,
+      address: selectedSafe,
       functionName: "execTransaction",
       args: [
         addresses.multiSendAddress,
@@ -146,7 +149,7 @@ export default function Aave() {
         BigInt(0),
         addresses.nullAddress,
         addresses.nullAddress,
-        addresses.userAddressSignature,
+        userAddressSignature(address),
       ],
     });
   };
