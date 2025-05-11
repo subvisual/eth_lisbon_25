@@ -8,6 +8,7 @@ import { SafeBalancesCard } from "./SafeBalancesCard";
 const { Text } = Typography;
 import { SYSTEM_PROMPT } from "../../lib/prompts";
 import { Transaction } from "./Transaction";
+import PerformBorrow from "./PerformBorrow";
 
 type ToolCall = {
   id: string;
@@ -47,6 +48,15 @@ const ToolResultRenderer = ({ toolResult }: { toolResult: ToolResult }) => {
         value={toolResult.result.value}
         contractAddress={toolResult.result.contractAddress}
         decimals={toolResult.result.decimals}
+      />
+    );
+  } else if (toolResult.toolName === "performBorrow") {
+    return (
+      <PerformBorrow
+        assetToSupply={toolResult.result.assetToSupply}
+        assetToBorrow={toolResult.result.assetToBorrow}
+        supplyAmount={toolResult.result.supplyAmount}
+        borrowAmount={toolResult.result.borrowAmount}
       />
     );
   } else if (toolResult.toolName === "getYieldStrategies") {

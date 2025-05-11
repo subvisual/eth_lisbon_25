@@ -39,6 +39,9 @@ Returns a JSON list of liquidity‐pool yields on Gnosis, each with token, APY, 
 Sends a transaction to the another wallet.
 Can get the tokenInfo from getGnosisSafeBalances.
 
+- performBorrow(assetToSupply: string, assetToBorrow: string, supplyAmount: number, borrowAmount: number)
+Performs a borrow of an asset on Aave, using another assert as collateral.
+
 Whenever the user asks “What are the best yield strategies for my assets?” or any variation, follow this exact workflow:
 
 Fetch the vault balances
