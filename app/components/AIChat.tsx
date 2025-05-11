@@ -39,7 +39,7 @@ type Message = {
 
 // Render tool result based on tool name
 const ToolResultRenderer = ({ toolResult }: { toolResult: ToolResult }) => {
-  if (toolResult.toolName === "getGnosisYield") {
+  if (toolResult.toolName === "getGnosisPoolsYield") {
     return <GnosisYieldTable yieldData={toolResult.result} />;
   } else if (toolResult.toolName === "getGnosisSafeBalances") {
     return <SafeBalancesCard data={toolResult.result} />;
