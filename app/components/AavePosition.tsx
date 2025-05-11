@@ -9,6 +9,7 @@ import { aavePoolV3Abi } from "../constants/abi/aavePoolV3";
 import { formatUnits } from "viem";
 import addresses from "@/app/constants/adresses.json";
 import { useAccount, useReadContract } from "wagmi";
+import { useSafe } from "@/lib/providers";
 
 interface ReserveData {
   underlyingAsset: string;
@@ -35,12 +36,13 @@ export interface FormValues {
 
 export default function Aave() {
   const { address, isConnected } = useAccount();
+  const { selectedSafe } = useSafe();
 
   const { data: userAccountData } = useReadContract({
     abi: aavePoolV3Abi,
     address: addresses.aavePoolV3Address,
     functionName: "getUserAccountData",
-    args: [address!],
+    args: [selectedSafe],
   });
 
   return (
