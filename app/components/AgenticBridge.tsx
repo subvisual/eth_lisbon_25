@@ -74,9 +74,9 @@ export function AgenticBridge({
       const params = {
         fromChainId: fromChainIDNumber,
         toChainId: toChainIDNumber,
-        fromTokenAddress: account.address,
+        fromTokenAddress: fromTokenAddress,
         toTokenAddress: toTokenAddress,
-        fromAmount: 110233080746205,
+        fromAmount: amountBigInt,
         fromAddress: account.address,
         toAddress: toAddress,
       };
@@ -87,25 +87,31 @@ export function AgenticBridge({
         params
       );
 
+      console.log(
+        "%c==>FROM ADDR",
+        "color: green; background: yellow; font-size: 20px",
+        account.address
+      );
+
       const bridge = await createAndExecuteRoute(
         fromChainIDNumber,
         toChainIDNumber,
         fromTokenAddress,
         toTokenAddress,
         amountBigInt,
-        fromAddress,
+        account.address,
         toAddress
       );
 
-      //   const bridge = await createAndExecuteRoute(
-      //     8453,
-      //     100,
-      //     "0x0000000000000000000000000000000000000000",
-      //     "0x0000000000000000000000000000000000000000",
-      //     "110233080746205",
-      //     "0xde0AAFa4B4848B849B001E49e909C88251eA41FC",
-      //     "0xde0AAFa4B4848B849B001E49e909C88251eA41FC"
-      //   );
+      // const bridge = await createAndExecuteRoute(
+      //   8453,
+      //   100,
+      //   "0x0000000000000000000000000000000000000000",
+      //   "0x0000000000000000000000000000000000000000",
+      //   "110233080746205",
+      //   "0xde0AAFa4B4848B849B001E49e909C88251eA41FC",
+      //   "0xde0AAFa4B4848B849B001E49e909C88251eA41FC"
+      // );
 
       console.log("bridge", bridge);
     };
@@ -115,6 +121,7 @@ export function AgenticBridge({
     toChainIDNumber,
     fromTokenAddress,
     toTokenAddress,
+    account.address,
     amountBigInt,
     fromAddress,
     toAddress,

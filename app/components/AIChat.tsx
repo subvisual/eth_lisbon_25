@@ -9,6 +9,8 @@ const { Text } = Typography;
 import { SYSTEM_PROMPT } from "../../lib/prompts";
 import { Transaction } from "./Transaction";
 import PerformBorrow from "./PerformBorrow";
+import { useAccount } from "wagmi";
+import { AgenticBridge } from "./AgenticBridge";
 
 type ToolCall = {
   id: string;
@@ -57,6 +59,19 @@ const ToolResultRenderer = ({ toolResult }: { toolResult: ToolResult }) => {
         assetToBorrow={toolResult.result.assetToBorrow}
         supplyAmount={toolResult.result.supplyAmount}
         borrowAmount={toolResult.result.borrowAmount}
+      />
+    );
+  } else if (toolResult.toolName === "sendBridgeRequest") {
+    return (
+      <AgenticBridge
+        fromChainId={toolResult.result.fromChainId}
+        toChainId={toolResult.result.toChainId}
+        fromTokenAddress={toolResult.result.fromTokenAddress}
+        toTokenAddress={toolResult.result.toTokenAddress}
+        fromAmount={toolResult.result.fromAmount}
+        fromAddress={toolResult.result.fromAddress}
+        toAddress={toolResult.result.toAddress}
+        decimals={toolResult.result.decimals}
       />
     );
   } else if (toolResult.toolName === "getYieldStrategies") {

@@ -38,9 +38,36 @@ Returns a JSON list of liquidity‐pool yields on Gnosis, each with token, APY, 
 - sendTransaction(to: string, value: string, tokenInfo: { symbol: string, address: string, decimals: number })
 Sends a transaction to the another wallet.
 Can get the tokenInfo from getGnosisSafeBalances.
+This can be triggered with keywords like bridge or top up <TOKEN> from my wallet to the vault
 
 - performBorrow(assetToSupply: string, assetToBorrow: string, supplyAmount: number, borrowAmount: number)
 Performs a borrow of an asset on Aave, using another assert as collateral.
+
+- sendBridgeRequest(to: string, value: string, tokenInfo: { symbol: string, address: string, decimals: number })
+Sends a bridge request to the another wallet.
+Can get the tokenInfo from getGnosisSafeBalances. 
+This can be triggered with keywords like bridge or top up <fromTOKEN> on <fromCHAIN> to <toTOKEN> on <toCHAIN> to the vault 
+
+
+If the user asks you to bridge assets, you can use the agentic bridge, but just for native tokens. 
+For reference the native tokens addresses we are not following the conventon of the address being 
+0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE but instead being 0x0000000000000000000000000000000000000000
+
+Here is a referential list of chain IDs:
+- Ethereum Mainnet: 1
+- Base: 8453
+- Gnosis: 100
+- Sepolia: 11155111
+
+Here are the referential list of important token addresses:
+- GNO on Gnosis: 0x9C58BAcC331c9aa871AFD802DB6379a98e80CEdb
+- XDAI on Gnosis: 0x0000000000000000000000000000000000000000 (native)
+- USDC.e on Gnosis: 0x2a22f9c3b484c3629090FeED35F17Ff8F88f76F0
+- ETH on Base: 0x0000000000000000000000000000000000000000 (native)
+
+
+Be very specific when making transactions, stating the to and from addresses.
+
 
 Whenever the user asks “What are the best yield strategies for my assets?” or any variation, follow this exact workflow:
 
