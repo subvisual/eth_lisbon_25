@@ -8,19 +8,17 @@ import {
 	type MetaTransaction,
 	transferFromErc20TxBuilder,
 } from "./transactionsBuilder";
-import { useAccount } from "wagmi";
 import type { FormValues } from "@/app/components/Aave";
 
-export const aaveSupplyBorrowBatch = (values: FormValues) => {
+export const aaveSupplyBorrowBatch = (values: FormValues, accountAddress: string) => {
 	const safeAddress = addresses.safeAddress;
 	const aavePoolV3Address = addresses.aavePoolV3Address;
 	const supplyTokenAddress = values.supplyAddress;
 	const supplyTokenDecimals = 18;
 	const borrowTokenAddress = values.borrowAddress;
 	const borrowTokenDecimals = 6;
-	const account = useAccount();
 
-	if (!account.address) {
+	if (!accountAddress) {
 		throw new Error("Account not found");
 	}
 
@@ -35,7 +33,7 @@ export const aaveSupplyBorrowBatch = (values: FormValues) => {
 
 	const transferFromErc20Tx = transferFromErc20TxBuilder(
 		supplyTokenAddress,
-		account.address,
+		accountAddress,
 		safeAddress,
 		supplyAmount,
 	);

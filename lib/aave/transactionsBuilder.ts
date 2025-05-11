@@ -117,3 +117,25 @@ export const aaveBorrowTxBuilder = (
 
 	return borrowTx;
 };
+
+export const aaveRepayTxBuilder = (
+	aavePoolV3Address: string,
+	borrowTokenAddress: string,
+	safeAddress: string,
+	amount: string,
+) => {
+	const repayTxData = encodeFunctionData({
+		functionName: "repay",
+		args: [borrowTokenAddress, BigInt(amount), BigInt(2), safeAddress],
+		abi: aavePoolV3Abi,
+	});
+
+	const repayTx: MetaTransaction = {
+		to: aavePoolV3Address,
+		data: repayTxData,
+		value: BigInt(0),
+		operation: 0,
+	};
+
+	return repayTx;
+};
