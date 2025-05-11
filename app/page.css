@@ -14,28 +14,6 @@
   color: #fff;
 }
 
-/* Global max-height override */
-* {
-  max-height: 100vh !important;
-}
-
-#widget-scrollable-container-\:rb\: {
-  max-height: 100vh !important;
-  overflow-y: visible;
-}
-
-/* Override for MuiBox-root */
-.MuiBox-root.css-ruv669 {
-  max-height: 100vh !important;
-  overflow-y: visible;
-}
-
-/* Override for widget relative container */
-#widget-relative-container-\:rb\: {
-  max-height: 100vh !important;
-  overflow-y: visible;
-}
-
 .header {
   position: absolute;
   top: 0;

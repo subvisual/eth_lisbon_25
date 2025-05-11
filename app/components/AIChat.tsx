@@ -186,6 +186,7 @@ export const AIChat = ({ safeAddress }: { safeAddress: string }) => {
         width: "100%",
         display: "flex",
         flexDirection: "column",
+        maxHeight: "calc(100dvh - 180px)",
       }}
     >
       <Card
