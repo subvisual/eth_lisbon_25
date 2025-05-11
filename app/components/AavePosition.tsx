@@ -1,35 +1,14 @@
 "use client";
 
-import {
-  Layout,
-  Typography,
-  Form,
-  InputNumber,
-  Select,
-  Button,
-  Card,
-  Space,
-} from "antd";
+import { Layout, Typography, Card, Space } from "antd";
 
-const { Header, Content } = Layout;
-const { Title, Text } = Typography;
-const { Option } = Select;
+const { Content } = Layout;
+const { Text } = Typography;
 
-import { uiPoolDataProviderAbi } from "../constants/abi/uiPoolDataProvider";
-import { erc20Abi } from "../constants/abi/erc20";
 import { aavePoolV3Abi } from "../constants/abi/aavePoolV3";
-import { safeAccountAbi } from "../constants/abi/safeAccount";
-
 import { formatUnits } from "viem";
-
-import {
-  useAccount,
-  useWriteContract,
-  useReadContract,
-  usePublicClient,
-} from "wagmi";
-import { useState, useEffect } from "react";
 import addresses from "@/app/constants/adresses.json";
+import { useAccount, useReadContract } from "wagmi";
 
 interface ReserveData {
   underlyingAsset: string;
@@ -45,7 +24,7 @@ interface ReservesResponse {
   [1]: any[]; // We don't need the second array for now
 }
 
-const POOL_ADDRESSES_PROVIDER = "0x012bAC54348C0E635dCAc9D5FB99f06F24136C9A";
+const POOL_ADDRESSES_PROVIDER = "0x36616cf17557639614c1cdDb356b1B83fc0B2132";
 
 export interface FormValues {
   supplyAddress: string;
@@ -59,13 +38,15 @@ export default function Aave() {
 
   const { data: userAccountData } = useReadContract({
     abi: aavePoolV3Abi,
-    address: "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
+    address: addresses.aavePoolV3Address,
     functionName: "getUserAccountData",
     args: [address!],
   });
 
   return (
-    <Layout style={{ minHeight: "600px", maxHeight: "600px", background: "#fff" }}>
+    <Layout
+      style={{ minHeight: "600px", maxHeight: "600px", background: "#fff" }}
+    >
       <Content
         style={{
           display: "flex",

@@ -31,6 +31,8 @@ import {
 import { useState, useEffect } from "react";
 import { aaveSupplyBorrowBatch } from "@/lib/aave/aaveSupplyBorrowBatch";
 import addresses from "@/app/constants/adresses.json";
+import { userAddressSignature } from "@/lib/aave/transactionsBuilder";
+import { useSafe } from "@/lib/providers";
 
 interface ReserveData {
   underlyingAsset: string;
@@ -46,7 +48,7 @@ interface ReservesResponse {
   [1]: any[]; // We don't need the second array for now
 }
 
-const POOL_ADDRESSES_PROVIDER = "0x012bAC54348C0E635dCAc9D5FB99f06F24136C9A";
+const POOL_ADDRESSES_PROVIDER = "0x36616cf17557639614c1cdDb356b1B83fc0B2132";
 
 export interface FormValues {
   supplyAddress: string;
@@ -62,21 +64,38 @@ export default function Aave() {
   const [tokenBalances, setTokenBalances] = useState<{
     [address: string]: bigint;
   }>({});
-  const [selectedSupplyToken, setSelectedSupplyToken] =
-    useState<ReserveData | null>(null);
+  const [selectedSupplyToken, setSelectedSupplyToken] = useState<string>("");
+  const [selectedBorrowToken, setSelectedBorrowToken] = useState<string>("");
+  const { selectedSafe } = useSafe();
 
   const { data: reserves } = useReadContract({
     abi: uiPoolDataProviderAbi,
-    address: "0x69529987FA4A075D0C00B0128fa848dc9ebbE9CE",
+    address: "0x5598BbFA2f4fE8151f45bBA0a3edE1b54B51a0a9",
     functionName: "getReservesData",
     args: [POOL_ADDRESSES_PROVIDER],
   }) as { data: ReservesResponse | undefined };
 
   const { data: userAccountData } = useReadContract({
     abi: aavePoolV3Abi,
-    address: "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
+    address: selectedSafe,
     functionName: "getUserAccountData",
     args: [address!],
+  });
+
+  const { data: supplyDecimals } = useReadContract({
+    abi: erc20Abi,
+    address: selectedSupplyToken,
+    functionName: "decimals",
+    args: [],
+    enabled: !!selectedSupplyToken,
+  });
+
+  const { data: borrowDecimals } = useReadContract({
+    abi: erc20Abi,
+    address: selectedBorrowToken,
+    functionName: "decimals",
+    args: [],
+    enabled: !!selectedBorrowToken,
   });
 
   useEffect(() => {
@@ -119,22 +138,22 @@ export default function Aave() {
   };
 
   const onSubmit = async (values: FormValues) => {
-    if (!address) {
-      throw new Error("Account not connected");
+    if (!address || !selectedSafe || !supplyDecimals || !borrowDecimals) {
+      throw new Error("Account not connected or token decimals not available");
     }
 
     writeContract({
       abi: erc20Abi,
       address: values.supplyAddress,
       functionName: "approve",
-      args: [addresses.safeAddress, BigInt(values.supplyAmount * 10 ** 18)],
+      args: [selectedSafe, BigInt(values.supplyAmount * 10 ** Number(supplyDecimals))],
     });
 
-    const { safeMultiSendData } = aaveSupplyBorrowBatch(values, address);
+    const { safeMultiSendData } = aaveSupplyBorrowBatch(values, address, selectedSafe, Number(supplyDecimals), Number(borrowDecimals));
 
     writeContract({
       abi: safeAccountAbi,
-      address: addresses.safeAddress,
+      address: selectedSafe,
       functionName: "execTransaction",
       args: [
         addresses.multiSendAddress,
@@ -146,9 +165,17 @@ export default function Aave() {
         BigInt(0),
         addresses.nullAddress,
         addresses.nullAddress,
-        addresses.userAddressSignature,
+        userAddressSignature(address),
       ],
     });
+  };
+
+  const handleSupplyTokenChange = (value: string) => {
+    setSelectedSupplyToken(value);
+  };
+
+  const handleBorrowTokenChange = (value: string) => {
+    setSelectedBorrowToken(value);
   };
 
   return (
@@ -183,13 +210,7 @@ export default function Aave() {
               <Select
                 placeholder="Select asset"
                 optionLabelProp="label"
-                onChange={(value: string) => {
-                  const token = reserves?.[0]?.find(
-                    (t: ReserveData) => t.underlyingAsset === value
-                  );
-                  setSelectedSupplyToken(token || null);
-                  form.setFieldValue("supplyAddress", value);
-                }}
+                onChange={handleSupplyTokenChange}
                 style={{ width: "100%" }}
               >
                 {reserves?.[0]
@@ -261,8 +282,10 @@ export default function Aave() {
                   Max:{" "}
                   {selectedSupplyToken
                     ? getAvailableAmount(
-                        selectedSupplyToken.underlyingAsset,
-                        selectedSupplyToken.decimals
+                        selectedSupplyToken,
+                        reserves?.[0]?.find(
+                          (t: ReserveData) => t.underlyingAsset === selectedSupplyToken
+                        )?.decimals || 0
                       )
                     : 0}
                 </Text>
@@ -282,7 +305,12 @@ export default function Aave() {
                 name="borrowAddress"
                 rules={[{ required: true }]}
               >
-                <Select placeholder="Select asset" style={{ width: "100%" }}>
+                <Select
+                  placeholder="Select asset"
+                  optionLabelProp="label"
+                  onChange={handleBorrowTokenChange}
+                  style={{ width: "100%" }}
+                >
                   {reserves?.[0]
                     ?.filter(
                       (token: ReserveData) =>

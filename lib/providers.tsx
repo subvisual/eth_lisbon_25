@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import { config as wagmiConfig } from "./wagmi";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { sepolia } from "wagmi/chains";
+import { sepolia, gnosis } from "wagmi/chains";
 import { SsrWrapper } from "@/app/components/ssr-wrapper";
 import { createContext, useContext, useState } from "react";
 
@@ -44,7 +44,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           <RainbowKitProvider
             showRecentTransactions={true}
             modalSize="compact"
-            initialChain={sepolia}
+            initialChain={gnosis}
           >
             <SafeProvider>{children}</SafeProvider>
           </RainbowKitProvider>

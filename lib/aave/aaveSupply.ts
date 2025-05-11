@@ -8,11 +8,9 @@ import {
 } from "./transactionsBuilder";
 import type { SupplyFormValues } from "@/app/components/AaveSupply";
 
-export const aaveSupply = (values: SupplyFormValues, accountAddress: string) => {
-	const safeAddress = addresses.safeAddress;
+export const aaveSupply = (values: SupplyFormValues, accountAddress: string, safeAddress: string, supplyDecimals: number) => {
 	const aavePoolV3Address = addresses.aavePoolV3Address;
 	const supplyTokenAddress = values.supplyAddress;
-	const supplyTokenDecimals = 18;
 
 	if (!accountAddress) {
 		throw new Error("Account not found");
@@ -20,7 +18,7 @@ export const aaveSupply = (values: SupplyFormValues, accountAddress: string) => 
 
 	const supplyAmount = (
 		values.supplyAmount *
-		10 ** supplyTokenDecimals
+		10 ** supplyDecimals
 	).toString();
 
     const approveTx = approveErc20TxBuilder(

@@ -8,11 +8,9 @@ import {
 } from "./transactionsBuilder";
 import type { RepayFormValues } from "@/app/components/AaveRepay";
 
-export const aaveRepay = (values: RepayFormValues, accountAddress: string) => {
-	const safeAddress = addresses.safeAddress;
+export const aaveRepay = (values: RepayFormValues, accountAddress: string, safeAddress: string, repayDecimals: number) => {
 	const aavePoolV3Address = addresses.aavePoolV3Address;
 	const repayTokenAddress = values.repayAddress;
-	const repayTokenDecimals = 6;
 
 	if (!accountAddress) {
 		throw new Error("Account not found");
@@ -20,7 +18,7 @@ export const aaveRepay = (values: RepayFormValues, accountAddress: string) => {
 
 	const repayAmount = (
 		values.repayAmount *
-		10 ** repayTokenDecimals
+		10 ** repayDecimals
 	).toString();
 
     const approveTx = approveErc20TxBuilder(
@@ -36,7 +34,6 @@ export const aaveRepay = (values: RepayFormValues, accountAddress: string) => {
 		repayAmount,
 	);
 
-	console.log(aaveRepayTx.data);
 	const safeTxs = [approveTx, aaveRepayTx];
 
 	const encodedSafeMultiSend = encodeMultiSend(safeTxs);
