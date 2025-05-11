@@ -25,13 +25,13 @@ import {
 import { useState, useEffect } from "react";
 import addresses from "@/app/constants/adresses.json";
 import { safeAccountAbi } from "../constants/abi/safeAccount";
-import { aaveBorrow } from "@/lib/aave/aaveBorrow";
+import { aaveWithdraw } from "@/lib/aave/aaveWithdraw";
 
 const POOL_ADDRESSES_PROVIDER = "0x012bAC54348C0E635dCAc9D5FB99f06F24136C9A";
 
-export interface BorrowFormValues {
-  borrowAddress: string;
-  borrowAmount: number;
+export interface WithdrawFormValues {
+  withdrawAddress: string;
+  withdrawAmount: number;
 }
 
 export interface ReserveData {
@@ -41,7 +41,7 @@ export interface ReserveData {
   isActive: boolean;
 }
 
-export default function AaveBorrow() {
+export default function AaveWithdraw() {
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient();
   const { writeContract } = useWriteContract();
@@ -94,7 +94,7 @@ export default function AaveBorrow() {
         throw new Error("Account not connected");
     }
 
-    const { aaveBorrowTx } = aaveBorrow(values, address);
+    const { aaveWithdrawTx } = aaveWithdraw(values, address);
 
     writeContract({
         abi: safeAccountAbi,
@@ -103,7 +103,7 @@ export default function AaveBorrow() {
         args: [
             addresses.aavePoolV3Address,
             BigInt(0),
-            aaveBorrowTx.data,
+            aaveWithdrawTx.data,
             0,
             BigInt(0),
             BigInt(0),
@@ -130,11 +130,11 @@ export default function AaveBorrow() {
             form={form}
             onFinish={onSubmit}
             initialValues={{
-              borrowAmount: 0,
-              borrowAsset: "USDC",
+              repayAmount: 0,
+              repayAsset: "WETH",
             }}
           >
-            <Form.Item label="Asset to Borrow" name="borrowAddress">
+            <Form.Item label="Asset to Withdraw" name="withdrawAddress">
               <Select placeholder="Select asset" optionLabelProp="label">
                 {reserves?.[0]
                   ?.filter((token: ReserveData) => token.isActive)
@@ -158,12 +158,12 @@ export default function AaveBorrow() {
             </Form.Item>
 
             <Form.Item
-              label="Amount to Borrow"
-              name="borrowAmount"
+              label="Amount to Withdraw"
+              name="withdrawAmount"
               rules={[
                 {
                   required: true,
-                  message: "Please input the amount to Borrow",
+                  message: "Please input the amount to Withdraw",
                 },
               ]}
             >

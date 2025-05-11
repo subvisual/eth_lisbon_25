@@ -140,6 +140,28 @@ export const aaveRepayTxBuilder = (
 	return repayTx;
 };
 
+export const aaveWithdrawTxBuilder = (
+	aavePoolV3Address: string,
+	withdrawTokenAddress: string,
+	safeAddress: string,
+	amount: string,
+) => {
+	const withdrawTxData = encodeFunctionData({
+		functionName: "withdraw",
+		args: [withdrawTokenAddress, BigInt(amount), safeAddress],
+		abi: aavePoolV3Abi,
+	});
+
+	const withdrawTx: MetaTransaction = {
+		to: aavePoolV3Address,
+		data: withdrawTxData,
+		value: BigInt(0),
+		operation: 0,
+	};
+
+	return withdrawTx;
+};
+
 export const encodeMultiSend = (txs: MetaTransaction[]): string => {
 	return `0x${txs.map((tx) => encodeMetaTransaction(tx)).join("")}`;
 };

@@ -131,7 +131,7 @@
               onFinish={onSubmit}
               initialValues={{
                 repayAmount: 0,
-                repayAsset: "WETH",
+                repayAsset: "USDT",
               }}
             >
               <Form.Item label="Asset to Repay" name="repayAddress">
