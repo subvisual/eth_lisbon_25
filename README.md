@@ -1,14 +1,15 @@
 
-# OK, Let's GNO - Cross-Chain Gnosis Pay & Agentic DeFi App
+# OK, Let's GNO 
 
-A next-generation web3 application enabling seamless cross-chain top-ups for Gnosis Pay, unified Aave lending/borrowing, and AI-powered portfolio optimization.  
+A next-generation web3 application enabling seamless cross-chain account top-ups, unified Aave lending/borrowing, and AI-powered portfolio optimization.  
+
 Built for ETH Lisbon 2025.
 
 ---
 
 ## 🚀 Features
 
-- **Multi-Chain Gnosis Pay Top-Up:**  
+- **Multi-Chain Top-Up:**  
   Instantly bridge any crypto asset from any supported blockchain to your Gnosis Safe/Pay card on Gnosis Chain.
 
 - **Unified Aave Lending & Borrowing:**  
@@ -78,7 +79,7 @@ npm run dev
 ## 💡 Usage
 
 1. **Connect your wallet** (MetaMask, WalletConnect, etc.).
-2. **Top up your Gnosis Pay card:**  
+2. **Top up your account:**  
    - Select the source chain and asset.
    - Enter the amount and confirm.  
    - Funds are bridged and deposited to your Gnosis Safe.
