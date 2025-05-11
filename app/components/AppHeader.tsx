@@ -184,12 +184,27 @@ export default function AppHeader() {
       }}
     >
       {/* Logo */}
-      <Link
-        href="/"
-        style={{ display: "flex", alignItems: "center", marginRight: "auto" }}
+      <button
+        onClick={() => {
+          const audio = new Audio("/meme-okay-lets-go.mp3");
+          audio.play();
+          setTimeout(() => {
+            audio.pause();
+            audio.currentTime = 0;
+          }, 3000);
+        }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          marginRight: "auto",
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          padding: 0,
+        }}
       >
         <Logo />
-      </Link>
+      </button>
 
       {/* Navigation */}
       <Menu
