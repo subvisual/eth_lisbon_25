@@ -156,7 +156,7 @@ export interface SafeBalanceItem {
 
 export async function getSafeBalances(
   safeAddress: string,
-  chainId: number
+  chainId: string
 ): Promise<SafeBalancesResponse> {
   try {
     const url = `https://safe-client.safe.global/v1/chains/${chainId}/safes/${safeAddress}/balances/usd?trusted=false`;

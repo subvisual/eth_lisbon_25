@@ -9,6 +9,8 @@ const { Text } = Typography;
 import { SYSTEM_PROMPT } from "../../lib/prompts";
 import { Transaction } from "./Transaction";
 import PerformBorrow from "./PerformBorrow";
+import { useAccount } from "wagmi";
+import { AgenticBridge } from "./AgenticBridge";
 
 type ToolCall = {
   id: string;
@@ -59,6 +61,19 @@ const ToolResultRenderer = ({ toolResult }: { toolResult: ToolResult }) => {
         borrowAmount={toolResult.result.borrowAmount}
       />
     );
+  } else if (toolResult.toolName === "sendBridgeRequest") {
+    return (
+      <AgenticBridge
+        fromChainId={toolResult.result.fromChainId}
+        toChainId={toolResult.result.toChainId}
+        fromTokenAddress={toolResult.result.fromTokenAddress}
+        toTokenAddress={toolResult.result.toTokenAddress}
+        fromAmount={toolResult.result.fromAmount}
+        fromAddress={toolResult.result.fromAddress}
+        toAddress={toolResult.result.toAddress}
+        decimals={toolResult.result.decimals}
+      />
+    );
   } else if (toolResult.toolName === "getYieldStrategies") {
     return null;
   } else if (toolResult.toolName === "getGnosisPoolsYield") {
@@ -84,17 +99,29 @@ const ToolResultRenderer = ({ toolResult }: { toolResult: ToolResult }) => {
   );
 };
 
-export const AIChat = ({ safeAddress }: { safeAddress: string }) => {
+export const AIChat = ({
+  safeAddress,
+  chainId,
+}: {
+  safeAddress: string;
+  chainId: number;
+}) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "system-prompt",
       role: "system",
-      content: SYSTEM_PROMPT + safeAddress,
+      content:
+        SYSTEM_PROMPT +
+        `\n\n The user vault address is ${safeAddress}. 
+        The chain ID is ${chainId}.`,
     },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  console.log("chainId", chainId);
+  console.log("safeAddress", safeAddress);
 
   useEffect(() => {
     // Scroll to bottom when messages change

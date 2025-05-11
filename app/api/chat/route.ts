@@ -6,6 +6,7 @@ import {
   getGnosisPoolYield,
   getYieldStrategies,
 } from "@/lib/yield_strategist/ollama/tools";
+import { parseUnits } from "viem";
 
 const strategistTools = {
   getGnosisPoolsYield: tool({
@@ -22,9 +23,10 @@ const strategistTools = {
     description: "Displays the balances of the currently selected safe.",
     parameters: z.object({
       addr: z.string().describe("The ethereum vault address."),
+      chainId: z.string().describe("The chain ID."),
     }),
-    execute: async ({ addr }) =>
-      JSON.parse(await getGnosisSafeBalances({ addr })),
+    execute: async ({ addr, chainId }) =>
+      JSON.parse(await getGnosisSafeBalances({ addr, chainId })),
   }),
   getYieldStrategies: tool({
     description: "Shows the optimal yield strategies currently available.",
@@ -77,6 +79,64 @@ const strategistTools = {
         assetToBorrow,
         supplyAmount,
         borrowAmount,
+      };
+    },
+  }),
+  sendBridgeRequest: tool({
+    description: "Sends a bridge request to the another wallet.",
+    parameters: z.object({
+      fromChainId: z.number().describe("The chain ID of the source chain."),
+      toChainId: z.number().describe("The chain ID of the destination chain."),
+      fromTokenAddress: z
+        .string()
+        .describe("The address of the token on the source chain."),
+      toTokenAddress: z
+        .string()
+        .describe("The address of the token on the destination chain."),
+      fromAmount: z
+        .string()
+        .describe("The amount of the token to send on the source chain."),
+      fromAddress: z
+        .string()
+        .describe("The address of the token on the source chain."),
+      toAddress: z
+        .string()
+        .describe("The address of the token on the destination chain."),
+      tokenInfo: z.object({
+        symbol: z.string().describe("The symbol of the token."),
+        address: z.string().describe("The address of the contract."),
+        decimals: z.number().describe("The number of decimals of the token."),
+      }),
+    }),
+    execute: async ({
+      fromChainId,
+      toChainId,
+      fromTokenAddress,
+      toTokenAddress,
+      fromAmount,
+      fromAddress,
+      toAddress,
+      tokenInfo,
+    }) => {
+      console.log(
+        fromChainId,
+        toChainId,
+        fromTokenAddress,
+        toTokenAddress,
+        fromAmount,
+        fromAddress,
+        toAddress,
+        tokenInfo
+      );
+      return {
+        fromChainId: fromChainId,
+        toChainId: toChainId,
+        fromTokenAddress: fromTokenAddress,
+        toTokenAddress: toTokenAddress,
+        fromAmount: fromAmount,
+        fromAddress: fromAddress,
+        toAddress: toAddress,
+        decimals: tokenInfo.decimals,
       };
     },
   }),

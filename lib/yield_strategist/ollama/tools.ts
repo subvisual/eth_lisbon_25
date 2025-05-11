@@ -107,9 +107,15 @@ export async function getGnosisPoolYield({
   return JSON.stringify(filteredData);
 }
 
-export async function getGnosisSafeBalances({ addr }: { addr: string }) {
+export async function getGnosisSafeBalances({
+  addr,
+  chainId,
+}: {
+  addr: string;
+  chainId: string;
+}) {
   console.log("balance checker called!");
-  const balance = await getSafeBalances(addr);
+  const balance = await getSafeBalances(addr, chainId);
 
   balance.items.forEach((token) => {
     token.formattedBalance =
