@@ -2,20 +2,17 @@ import addresses from "@/app/constants/adresses.json";
 import { encodeFunctionData } from "viem";
 import { multiSendAbi } from "@/app/constants/abi/multiSend";
 import {
-	aaveSupplyTxBuilder,
-	aaveBorrowTxBuilder,
-	transferFromErc20TxBuilder,
-	encodeMultiSend,
+    aaveSupplyTxBuilder,
+    approveErc20TxBuilder,
+    encodeMultiSend,
 } from "./transactionsBuilder";
-import type { FormValues } from "@/app/components/Aave";
+import type { SupplyFormValues } from "@/app/components/AaveSupply";
 
-export const aaveSupplyBorrowBatch = (values: FormValues, accountAddress: string) => {
+export const aaveSupply = (values: SupplyFormValues, accountAddress: string) => {
 	const safeAddress = addresses.safeAddress;
 	const aavePoolV3Address = addresses.aavePoolV3Address;
 	const supplyTokenAddress = values.supplyAddress;
 	const supplyTokenDecimals = 18;
-	const borrowTokenAddress = values.borrowAddress;
-	const borrowTokenDecimals = 6;
 
 	if (!accountAddress) {
 		throw new Error("Account not found");
@@ -25,30 +22,21 @@ export const aaveSupplyBorrowBatch = (values: FormValues, accountAddress: string
 		values.supplyAmount *
 		10 ** supplyTokenDecimals
 	).toString();
-	const borrowAmount = (
-		values.borrowAmount *
-		10 ** borrowTokenDecimals
-	).toString();
 
-	const transferFromErc20Tx = transferFromErc20TxBuilder(
-		supplyTokenAddress,
-		accountAddress,
-		safeAddress,
-		supplyAmount,
-	);
+    const approveTx = approveErc20TxBuilder(
+        aavePoolV3Address,
+        supplyTokenAddress,
+        supplyAmount,
+    );
+
 	const aaveSupplyTx = aaveSupplyTxBuilder(
 		aavePoolV3Address,
 		supplyTokenAddress,
 		safeAddress,
 		supplyAmount,
 	);
-	const aaveBorrowTx = aaveBorrowTxBuilder(
-		aavePoolV3Address,
-		borrowTokenAddress,
-		safeAddress,
-		borrowAmount,
-	);
-	const safeTxs = [transferFromErc20Tx, aaveSupplyTx, aaveBorrowTx];
+
+	const safeTxs = [approveTx, aaveSupplyTx];
 
 	const encodedSafeMultiSend = encodeMultiSend(safeTxs);
 

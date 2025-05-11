@@ -2,7 +2,7 @@ import { erc20Abi } from "@/app/constants/abi/erc20";
 import { encodeFunctionData } from "viem";
 import type { BigNumberish } from "ethers";
 import { aavePoolV3Abi } from "@/app/constants/abi/aavePoolV3";
-
+import { ethers } from "ethers";
 export interface MetaTransaction {
 	to: string;
 	value: BigNumberish;
@@ -138,4 +138,39 @@ export const aaveRepayTxBuilder = (
 	};
 
 	return repayTx;
+};
+
+export const aaveWithdrawTxBuilder = (
+	aavePoolV3Address: string,
+	withdrawTokenAddress: string,
+	safeAddress: string,
+	amount: string,
+) => {
+	const withdrawTxData = encodeFunctionData({
+		functionName: "withdraw",
+		args: [withdrawTokenAddress, BigInt(amount), safeAddress],
+		abi: aavePoolV3Abi,
+	});
+
+	const withdrawTx: MetaTransaction = {
+		to: aavePoolV3Address,
+		data: withdrawTxData,
+		value: BigInt(0),
+		operation: 0,
+	};
+
+	return withdrawTx;
+};
+
+export const encodeMultiSend = (txs: MetaTransaction[]): string => {
+	return `0x${txs.map((tx) => encodeMetaTransaction(tx)).join("")}`;
+};
+
+export const encodeMetaTransaction = (tx: MetaTransaction): string => {
+	const data = ethers.getBytes(tx.data);
+	const encoded = ethers.solidityPacked(
+		["uint8", "address", "uint256", "uint256", "bytes"],
+		[tx.operation, tx.to, tx.value, data.length, data],
+	);
+	return encoded.slice(2);
 };

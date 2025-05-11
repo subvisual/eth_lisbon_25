@@ -2,7 +2,6 @@
 
   import {
     Layout,
-    Typography,
     Form,
     InputNumber,
     Select,
@@ -11,8 +10,7 @@
     Space,
   } from "antd";
 
-  const { Header, Content } = Layout;
-  const { Title, Text } = Typography;
+  const { Content } = Layout;
   const { Option } = Select;
 
   import { uiPoolDataProviderAbi } from "../constants/abi/uiPoolDataProvider";
@@ -96,13 +94,6 @@
           throw new Error("Account not connected");
       }
 
-      // writeContract({
-      //     abi: erc20Abi,
-      //     address: values.repayAddress,
-      //     functionName: "approve",
-      //     args: [addresses.safeAddress, BigInt(values.repayAmount * 10 ** 6)],
-      // });
-
       const { safeMultiSendData } = aaveRepay(values, address);
 
       writeContract({
@@ -125,7 +116,7 @@
     };
 
     return (
-      <Layout style={{ minHeight: "500px", background: "#fafafa" }}>
+      <Layout style={{ minHeight: "600px", background: "#fafafa" }}>
         <Content
           style={{
             display: "flex",
@@ -140,7 +131,7 @@
               onFinish={onSubmit}
               initialValues={{
                 repayAmount: 0,
-                repayAsset: "WETH",
+                repayAsset: "USDT",
               }}
             >
               <Form.Item label="Asset to Repay" name="repayAddress">
@@ -172,7 +163,7 @@
                 rules={[
                   {
                     required: true,
-                    message: "Please input the amount to repay",
+                    message: "Please input the amount to Repay",
                   },
                 ]}
               >
