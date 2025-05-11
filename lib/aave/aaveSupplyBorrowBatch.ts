@@ -6,6 +6,7 @@ import {
 	aaveBorrowTxBuilder,
 	transferFromErc20TxBuilder,
 	encodeMultiSend,
+	approveErc20TxBuilder,
 } from "./transactionsBuilder";
 import type { FormValues } from "@/app/components/Aave";
 
@@ -16,6 +17,7 @@ export const aaveSupplyBorrowBatch = (values: FormValues, accountAddress: string
 	const supplyTokenDecimals = 18;
 	const borrowTokenAddress = values.borrowAddress;
 	const borrowTokenDecimals = 6;
+
 
 	if (!accountAddress) {
 		throw new Error("Account not found");
@@ -29,6 +31,12 @@ export const aaveSupplyBorrowBatch = (values: FormValues, accountAddress: string
 		values.borrowAmount *
 		10 ** borrowTokenDecimals
 	).toString();
+
+    const approveTx = approveErc20TxBuilder(
+        aavePoolV3Address,
+        supplyTokenAddress,
+        "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+    );
 
 	const transferFromErc20Tx = transferFromErc20TxBuilder(
 		supplyTokenAddress,
@@ -48,7 +56,7 @@ export const aaveSupplyBorrowBatch = (values: FormValues, accountAddress: string
 		safeAddress,
 		borrowAmount,
 	);
-	const safeTxs = [transferFromErc20Tx, aaveSupplyTx, aaveBorrowTx];
+	const safeTxs = [approveTx, transferFromErc20Tx, aaveSupplyTx, aaveBorrowTx];
 
 	const encodedSafeMultiSend = encodeMultiSend(safeTxs);
 
