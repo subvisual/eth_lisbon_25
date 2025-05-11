@@ -64,7 +64,6 @@ export default function Aave() {
     const fetchBalances = async () => {
       if (!reserves || !address || !publicClient) return;
 
-      console.log(reserves);
       const balances: { [tokenAddress: string]: bigint } = {};
 
       const tokenAddresses = reserves[0].map((r) => r.underlyingAsset);
@@ -78,8 +77,6 @@ export default function Aave() {
               functionName: "balanceOf",
               args: [address],
             });
-
-            console.log(tokenAddr, balance);
 
             balances[tokenAddr] = balance as bigint;
           } catch (err) {
@@ -103,8 +100,6 @@ export default function Aave() {
   };
 
   const onSubmit = async (values: FormValues) => {
-    console.log("values", values);
-
     if (!address) {
         throw new Error("Account not connected");
     }
@@ -138,28 +133,7 @@ export default function Aave() {
   };
 
   return (
-    <Layout style={{ minHeight: "100vh", background: "#fafafa" }}>
-      <Header
-        style={{
-          background: "#fff",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "16px 24px",
-        }}
-      >
-        <Title
-          level={3}
-          style={{
-            margin: 0,
-            fontFamily: "Poppins, sans-serif",
-            textAlign: "center",
-          }}
-        >
-          Aave V3 on Gnosis Chain
-        </Title>
-      </Header>
-
+    <Layout style={{ minHeight: "600px", background: "#fafafa" }}>
       <Content
         style={{
           display: "flex",
@@ -167,7 +141,7 @@ export default function Aave() {
           alignItems: "center",
         }}
       >
-        <Card title="Supply & Borrow" style={{ maxWidth: 450, flex: 1 }}>
+        <Card style={{ maxWidth: 450, flex: 1 }}>
           <Form
             layout="vertical"
             form={form}

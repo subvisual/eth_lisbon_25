@@ -120,13 +120,13 @@ export const aaveBorrowTxBuilder = (
 
 export const aaveRepayTxBuilder = (
 	aavePoolV3Address: string,
-	borrowTokenAddress: string,
+	repayTokenAddress: string,
 	safeAddress: string,
 	amount: string,
 ) => {
 	const repayTxData = encodeFunctionData({
 		functionName: "repay",
-		args: [borrowTokenAddress, BigInt(amount), BigInt(2), safeAddress],
+		args: [repayTokenAddress, BigInt(amount), BigInt(2), safeAddress],
 		abi: aavePoolV3Abi,
 	});
 
