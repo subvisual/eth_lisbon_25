@@ -1,12 +1,11 @@
 import addresses from "@/app/constants/adresses.json";
 import { encodeFunctionData } from "viem";
 import { multiSendAbi } from "@/app/constants/abi/multiSend";
-import { ethers } from "ethers";
 import {
 	aaveSupplyTxBuilder,
 	aaveBorrowTxBuilder,
-	type MetaTransaction,
 	transferFromErc20TxBuilder,
+	encodeMultiSend,
 } from "./transactionsBuilder";
 import type { FormValues } from "@/app/components/Aave";
 
@@ -60,17 +59,4 @@ export const aaveSupplyBorrowBatch = (values: FormValues, accountAddress: string
 	});
 
 	return { safeMultiSendData };
-};
-
-export const encodeMultiSend = (txs: MetaTransaction[]): string => {
-	return `0x${txs.map((tx) => encodeMetaTransaction(tx)).join("")}`;
-};
-
-export const encodeMetaTransaction = (tx: MetaTransaction): string => {
-	const data = ethers.getBytes(tx.data);
-	const encoded = ethers.solidityPacked(
-		["uint8", "address", "uint256", "uint256", "bytes"],
-		[tx.operation, tx.to, tx.value, data.length, data],
-	);
-	return encoded.slice(2);
 };

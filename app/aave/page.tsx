@@ -3,6 +3,7 @@
 import Aave from "@/app/components/Aave";
 import AaveRepay from "@/app/components/AaveRepay";
 import AaveSupply from "@/app/components/AaveSupply";
+import AaveBorrow from "@/app/components/AaveBorrow";
 import { Layout, Tabs } from "antd";
 import { Header } from "antd/es/layout/layout";
 import Title from "antd/es/typography/Title";
@@ -18,6 +19,11 @@ export default function AavePage() {
       key: 'supply',
       label: 'Supply',
       children: <AaveSupply />,
+    },
+    {
+      key: 'borrow',
+      label: 'Borrow',
+      children: <AaveBorrow />,
     },
     {
       key: 'repay',

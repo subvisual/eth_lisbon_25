@@ -94,13 +94,6 @@
           throw new Error("Account not connected");
       }
 
-      // writeContract({
-      //     abi: erc20Abi,
-      //     address: values.repayAddress,
-      //     functionName: "approve",
-      //     args: [addresses.safeAddress, BigInt(values.repayAmount * 10 ** 6)],
-      // });
-
       const { safeMultiSendData } = aaveRepay(values, address);
 
       writeContract({
