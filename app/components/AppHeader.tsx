@@ -28,7 +28,7 @@ export default function AppHeader() {
     {
       label: (
         <Link href="/" style={navLinkStyle}>
-          Home
+          AI Assistant
         </Link>
       ),
       key: "home",
@@ -49,32 +49,6 @@ export default function AppHeader() {
       ),
       key: "bridging",
     },
-    {
-      label: (
-        <a
-          href="https://faucet.gnosischain.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={navLinkStyle}
-        >
-          Faucet ↗︎
-        </a>
-      ),
-      key: "faucet",
-    },
-    {
-      label: (
-        <a
-          href="https://docs.gnosischain.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={navLinkStyle}
-        >
-          Docs ↗︎
-        </a>
-      ),
-      key: "docs",
-    },
   ];
 
   return (
@@ -94,8 +68,8 @@ export default function AppHeader() {
       >
         <Image
           src="/logo.png"
-          alt="Gnosis Chain"
-          width={160}
+          alt="App Logo"
+          width={100}
           height={35}
           priority
         />

@@ -25,7 +25,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             style={{
               flex: 1,
               paddingInline: 16,
-              overflowY: "scroll",
               position: "relative",
             }}
           >
@@ -35,8 +34,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 gap: "24px",
                 padding: "24px 24px 0",
                 height: "100%",
-                maxHeight: "100%",
-                overflow: "scroll",
               }}
             >
               <Flex style={{ flex: "1" }}>
@@ -45,9 +42,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               <Flex style={{ flex: "3", maxHeight: "100%" }}>{children}</Flex>
             </div>
           </Content>
-          <Footer style={{ textAlign: "center" }}>
-            © {new Date().getFullYear()} Subvisual • Built with ❤️ & redbull
-          </Footer>
         </Layout>
       </Providers>
     </ConfigProvider>
