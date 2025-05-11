@@ -1,83 +1,132 @@
-![Hero Image](/hero.png)
 
-# Subvisual eth lisbon 25
+# Cross-Chain Gnosis Pay & Agentic DeFi App
 
-A boilerplate to kickstart your Gnosis Chain dApp development. This starter kit includes:
-
-- **UX‑Friendly Wallet Integration**: MetaMask, WalletConnect, and social logins (Google, Farcaster) via Dynamic Labs SDK for frictionless onboarding.
-- **One‑Click Token Deployments**: Deploy your own ERC‑20 and ERC‑721 tokens with a guided UI handling constructor parameters and gas estimation.
-- **Rock‑Paper‑Scissors Demo**: On‑chain commit‑and‑reveal game built with Shutter SDK on Gnosis.
+A next-generation web3 application enabling seamless cross-chain top-ups for Gnosis Pay, unified Aave lending/borrowing, and AI-powered portfolio optimization.  
+Built for ETH Lisbon 2025.
 
 ---
 
-## 📦 Tech Stack
+## 🚀 Features
 
-- **Framework**: Next.js 13
-- **UI Library**: React + Ant Design
-- **Wallet & Auth**: Dynamic Labs SDK (`@dynamic-labs/sdk-react-core`, `@dynamic-labs/ethers-v6`, `@dynamic-labs/ethereum`)
-- **Blockchain**: Gnosis Chain via `ethers` & `viem`
-- **Encryption**: Shutter Network SDK (`@shutter-network/shutter-sdk`)
-- **Language**: TypeScript
+- **Multi-Chain Gnosis Pay Top-Up:**  
+  Instantly bridge any crypto asset from any supported blockchain to your Gnosis Safe/Pay card on Gnosis Chain.
 
----
+- **Unified Aave Lending & Borrowing:**  
+  Lend, borrow, and repay assets on Aave directly from a single, intuitive interface.
 
-## 🚀 Getting Started
+- **AI Agent for DeFi Portfolio Optimization:**  
+  Chat with an AI agent that analyzes your holdings, curates yield strategies, and can autonomously execute bridging, allocation, and strategy transactions upon your approval.
 
-### Prerequisites
-
-- **Node.js** v18 or above (Recommended v20.x)
-- **npm**, **yarn**, or **pnpm**
-- A Gnosis Chain wallet (e.g., MetaMask)
-
-### Installation
-
-```bash
-# Clone the repo
-git clone https://github.com/gnosischain/gnosis-dapp-boilerplate
-cd gnosis-dapp-boilerplate
-
-# Install dependencies
-npm install      # or yarn install, pnpm install
-```
-
-### Environment Variables
-
-Create a `.env` file in the project root and add the following keys:
-
-```dotenv
-NEXT_PUBLIC_DYNAMIC_API_KEY=
-NEXT_PUBLIC_SHUTTER_ENV=chiado
-```
-
-### Running Locally
-
-```bash
-npm run dev         # starts Next.js in development mode
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Building for Production
-
-```bash
-npm run build       # builds the optimized production bundle
-npm run start       # starts the production server
-```
+- **Agentic Automation:**  
+  The AI agent can check your balances, devise optimal DeFi strategies, prompt you for confirmation, and execute complex, multi-step transactions with a single click.
 
 ---
 
-## 🤝 Contributing
+## 🛠 Architecture
 
-1. Fork this repository.
-2. Create a feature branch (`git checkout -b feature/YourFeature`).
-3. Commit your changes (`git commit -m 'Add YourFeature'`).
-4. Push to the branch (`git push origin feature/YourFeature`).
-5. Open a Pull Request.
+- **Frontend:** React-based interface for wallet connection, asset management, Aave operations, and AI chat.
+- **Backend/API:** Node.js/Express server orchestrates cross-chain transfers, fetches yield strategies, and powers the AI agent.
+- **Smart Contracts:** Custom contracts for bridging, asset routing, and agentic transactions on Gnosis Chain and other EVM networks.
+- **AI Agent:** Integrates LLMs to provide conversational portfolio management and automated DeFi actions.
 
-Please follow the existing coding style and ensure all new features are covered by basic tests or manual QA.
+---
+
+## 🌐 Supported Networks & Protocols
+
+- **Chains:** Gnosis Chain, Ethereum, and other EVM-compatible networks.
+- **Protocols:** Gnosis Pay, Aave, Safe (Gnosis Safe), custom bridging contracts.
+
+---
+
+## 🏁 Getting Started
+
+### 1. Clone the Repository
+
+
+```
+git clone https://github.com/subvisual/eth_lisbon_25.git
+cd eth_lisbon_25
+```
+
+
+### 2. Install Dependencies
+
+```
+npm install
+```
+
+
+
+
+### 3. Configure Environment
+
+- Copy `.env.example` to `.env` and fill in required RPC URLs, API keys, and contract addresses.
+
+### 4. Run the App
+
+```
+npm run dev
+```
+
+
+
+
+- The frontend will be available at [http://localhost:3000](http://localhost:3000).
+
+---
+
+## 💡 Usage
+
+1. **Connect your wallet** (MetaMask, WalletConnect, etc.).
+2. **Top up your Gnosis Pay card:**  
+   - Select the source chain and asset.
+   - Enter the amount and confirm.  
+   - Funds are bridged and deposited to your Gnosis Safe.
+3. **Lend or borrow on Aave:**  
+   - Choose assets to lend, borrow, or repay.
+   - Borrowed funds can be routed directly to your Gnosis Safe.
+4. **Optimize with the AI Agent:**  
+   - Open the chat interface.
+   - The agent analyzes your portfolio, suggests yield strategies, and can execute transactions after your approval.
+
+---
+
+## 🤖 AI Agent Capabilities
+
+- **Portfolio Analysis:** Scans your on-chain holdings and positions.
+- **Strategy Curation:** Selects optimal yield strategies from a curated list.
+- **Agentic Transactions:**  
+  - Bridges assets cross-chain.
+  - Allocates assets to yield opportunities.
+  - Lends, borrows, or repays on Aave.
+  - Manages collateral and debt positions.
+- **Conversational Interface:**  
+  - Define risk preferences and investment goals via chat.
+  - Confirm or decline recommended actions before execution.
+
+---
+
+## 🧑‍💻 Contributing
+
+Pull requests and issues are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+---
+
+## 🛟 Support
+
+For questions, issues, or feature requests, open an issue in this repository.
 
 ---
 
 ## 📄 License
 
-Distributed under the **MIT License**. See [LICENSE](./LICENSE) for more information.
+MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+**Made with ❤️ for ETH Lisbon 2025**  
+[https://github.com/subvisual/eth_lisbon_25](https://github.com/subvisual/eth_lisbon_25)
+
+
+
+
