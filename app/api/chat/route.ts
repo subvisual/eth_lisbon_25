@@ -6,6 +6,7 @@ import {
   getGnosisPoolYield,
   getYieldStrategies,
 } from "@/lib/yield_strategist/ollama/tools";
+import { parseUnits } from "viem";
 
 const strategistTools = {
   getGnosisPoolsYield: tool({
@@ -22,9 +23,10 @@ const strategistTools = {
     description: "Displays the balances of the currently selected safe.",
     parameters: z.object({
       addr: z.string().describe("The ethereum vault address."),
+      chainId: z.string().describe("The chain ID."),
     }),
-    execute: async ({ addr }) =>
-      JSON.parse(await getGnosisSafeBalances({ addr })),
+    execute: async ({ addr, chainId }) =>
+      JSON.parse(await getGnosisSafeBalances({ addr, chainId })),
   }),
   getYieldStrategies: tool({
     description: "Shows the optimal yield strategies currently available.",

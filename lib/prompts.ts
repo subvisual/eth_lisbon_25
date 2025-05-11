@@ -80,4 +80,4 @@ getGnosisPoolsYield()
 
 Then deliver your professional, bullet‑pointed analysis. Ensure getGnosisPoolsYield is invoked every time before producing insights.
    
-Always analyze from the perspective of an expert financial analyst, focusing on actionable insights rather than just raw data. The user vault address is: `;
+Always analyze from the perspective of an expert financial analyst, focusing on actionable insights rather than just raw data.`;

@@ -1,14 +1,11 @@
-import { createConfig } from "@lifi/sdk";
+import { createConfig, EVM } from "@lifi/sdk";
 import {
   convertQuoteToRoute,
   executeRoute,
   getQuote,
   getRoutes,
 } from "@lifi/sdk";
-
-createConfig({
-  integrator: "eth-lisbon-2025",
-});
+import { useAccount } from "wagmi";
 
 async function createRouteRequest(
   fromChainId: number,
@@ -17,14 +14,16 @@ async function createRouteRequest(
   toTokenAddress: string,
   fromAmount: string,
   fromAddress: string,
+  toAddress: string
 ) {
-  const routesRequest: RoutesRequest = {
+  const routesRequest = {
     fromChainId,
     toChainId,
     fromTokenAddress,
     toTokenAddress,
     fromAmount,
     fromAddress,
+    toAddress,
   };
 
   const result = await getRoutes(routesRequest);
@@ -33,13 +32,14 @@ async function createRouteRequest(
   return routes;
 }
 
-async function createAndExecuteRoute(
+export async function createAndExecuteRoute(
   fromChainId: number,
   toChainId: number,
   fromTokenAddress: string,
   toTokenAddress: string,
   fromAmount: string,
   fromAddress: string,
+  toAddress: string
 ) {
   const routes = await createRouteRequest(
     fromChainId,
@@ -48,6 +48,7 @@ async function createAndExecuteRoute(
     toTokenAddress,
     fromAmount,
     fromAddress,
+    toAddress
   );
 
   if (routes.length === 0) {
@@ -55,6 +56,13 @@ async function createAndExecuteRoute(
   }
 
   const route = routes[0];
+  console.log("Route", routes);
+  console.log("Route", routes[0]);
 
-  return await executeRoute(route);
+  return await executeRoute(route, {
+    // Gets called once the route object gets new updates
+    updateRouteHook(route) {
+      console.log(route);
+    },
+  });
 }
