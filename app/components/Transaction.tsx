@@ -1,5 +1,5 @@
 "use client";
-import { useWriteContract } from "wagmi";
+import { useAccount, useWriteContract } from "wagmi";
 import { sepolia } from "viem/chains";
 import { parseUnits } from "viem";
 import { useEffect, useRef } from "react";
@@ -33,6 +33,8 @@ export const Transaction = ({
   const { writeContract } = useWriteContract();
   const initializedRef = useRef(false);
 
+  const { chain } = useAccount();
+
   useEffect(() => {
     const initalize = async () => {
       if (initializedRef.current) return;
@@ -43,7 +45,7 @@ export const Transaction = ({
         abi: erc20Abi,
         functionName: "transfer",
         args: [to, valueBigInt],
-        chainId: sepolia.id,
+        chainId: chain.id,
       };
 
       console.log(
