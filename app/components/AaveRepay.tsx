@@ -116,7 +116,7 @@
     };
 
     return (
-      <Layout style={{ minHeight: "600px", background: "#fafafa" }}>
+      <Layout style={{ minHeight: "600px", background: "#ffff" }}>
         <Content
           style={{
             display: "flex",
