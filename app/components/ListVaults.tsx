@@ -18,6 +18,7 @@ import {
 import { apiKit } from "@/lib/apiKit";
 import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
 import { useSafe } from "@/lib/providers";
+import { useQuery } from "@tanstack/react-query";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -92,24 +93,26 @@ const TokenCard = ({ balance }: { balance: SafeBalanceItem }) => {
 };
 
 const SafeInfo = ({ safeAddress }: { safeAddress: string }) => {
-  const [safeInfo, setSafeInfo] = useState<SafeInfoResponse | null>(null);
-  const [balances, setBalances] = useState<SafeBalanceItem[]>([]);
-  const [fiatTotal, setFiatTotal] = useState<string | null>(null);
-
   const { chain } = useAccount();
 
-  useEffect(() => {
-    const fetchSafeInfo = async () => {
-      const response = await apiKit.getSafeInfo(safeAddress);
-      const balancesResponse = await getSafeBalances(safeAddress, chain.id);
+  const { data: safeInfo } = useQuery({
+    queryKey: ["safeInfo", safeAddress],
+    queryFn: () => apiKit.getSafeInfo(safeAddress),
+    enabled: !!safeAddress,
+  });
 
-      setSafeInfo(response);
-      setBalances(balancesResponse.items || []);
-      setFiatTotal(balancesResponse.fiatTotal || null);
-    };
+  const { data: balancesData } = useQuery({
+    queryKey: ["safeBalances", safeAddress, chain?.id],
+    queryFn: () => {
+      if (!chain?.id) return null;
+      return getSafeBalances(safeAddress, chain.id.toString());
+    },
+    enabled: !!safeAddress && !!chain?.id,
+    refetchInterval: 5000,
+  });
 
-    fetchSafeInfo();
-  }, [safeAddress, chain.id]);
+  const balances = balancesData?.items || [];
+  const fiatTotal = balancesData?.fiatTotal || null;
 
   return (
     <Flex vertical gap={24}>
@@ -160,17 +163,16 @@ const SafeInfo = ({ safeAddress }: { safeAddress: string }) => {
 
 export const ListVaults = () => {
   const { address, isConnected } = useAccount();
-  const [safes, setSafes] = useState<string[]>([]);
   const { selectedSafe, setSelectedSafe } = useSafe();
 
-  useEffect(() => {
-    const fetchSafes = async () => {
-      if (!address) return;
+  const { data: safes = [] } = useQuery({
+    queryKey: ["safes", address],
+    queryFn: async () => {
       const response = await getSafesByOwner(address);
-      setSafes(response.safes);
-    };
-    fetchSafes();
-  }, [address]);
+      return response.safes;
+    },
+    enabled: !!address,
+  });
 
   const handleSafeSelect = (value: string) => {
     console.log("Selected Safe:", value);
