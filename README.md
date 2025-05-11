@@ -1,6 +1,6 @@
 # OK, Let's GNO
 
-## Try it: https://eth-lisbon-25.vercel.app/
+## Try it on 👉 https://eth-lisbon-25.vercel.app/ 👈
 
 A next-generation web3 application enabling seamless cross-chain account top-ups, unified Aave lending/borrowing, and AI-powered portfolio optimization.
 
