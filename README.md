@@ -1,7 +1,8 @@
+# OK, Let's GNO
 
-# OK, Let's GNO 
+## Try it: https://eth-lisbon-25.vercel.app/
 
-A next-generation web3 application enabling seamless cross-chain account top-ups, unified Aave lending/borrowing, and AI-powered portfolio optimization.  
+A next-generation web3 application enabling seamless cross-chain account top-ups, unified Aave lending/borrowing, and AI-powered portfolio optimization.
 
 Built for ETH Lisbon 2025.
 
@@ -43,21 +44,16 @@ Built for ETH Lisbon 2025.
 
 ### 1. Clone the Repository
 
-
 ```
 git clone https://github.com/subvisual/eth_lisbon_25.git
 cd eth_lisbon_25
 ```
-
 
 ### 2. Install Dependencies
 
 ```
 npm install
 ```
-
-
-
 
 ### 3. Configure Environment
 
@@ -69,9 +65,6 @@ npm install
 npm run dev
 ```
 
-
-
-
 - The frontend will be available at [http://localhost:3000](http://localhost:3000).
 
 ---
@@ -79,14 +72,14 @@ npm run dev
 ## 💡 Usage
 
 1. **Connect your wallet** (MetaMask, WalletConnect, etc.).
-2. **Top up your account:**  
+2. **Top up your account:**
    - Select the source chain and asset.
-   - Enter the amount and confirm.  
+   - Enter the amount and confirm.
    - Funds are bridged and deposited to your Gnosis Safe.
-3. **Lend or borrow on Aave:**  
+3. **Lend or borrow on Aave:**
    - Choose assets to lend, borrow, or repay.
    - Borrowed funds can be routed directly to your Gnosis Safe.
-4. **Optimize with the AI Agent:**  
+4. **Optimize with the AI Agent:**
    - Open the chat interface.
    - The agent analyzes your portfolio, suggests yield strategies, and can execute transactions after your approval.
 
@@ -96,12 +89,12 @@ npm run dev
 
 - **Portfolio Analysis:** Scans your on-chain holdings and positions.
 - **Strategy Curation:** Selects optimal yield strategies from a curated list.
-- **Agentic Transactions:**  
+- **Agentic Transactions:**
   - Bridges assets cross-chain.
   - Allocates assets to yield opportunities.
   - Lends, borrows, or repays on Aave.
   - Manages collateral and debt positions.
-- **Conversational Interface:**  
+- **Conversational Interface:**
   - Define risk preferences and investment goals via chat.
   - Confirm or decline recommended actions before execution.
 
@@ -127,7 +120,3 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 **Made with ❤️ for ETH Lisbon 2025**  
 [https://github.com/subvisual/eth_lisbon_25](https://github.com/subvisual/eth_lisbon_25)
-
-
-
-
