@@ -58,6 +58,16 @@ export default function AaveWithdraw() {
     args: [POOL_ADDRESSES_PROVIDER],
   });
 
+  const [selectedToken, setSelectedToken] = useState<string>("");
+  
+  const { data: withdrawDecimals } = useReadContract({
+    abi: erc20Abi,
+    address: selectedToken,
+    functionName: "decimals",
+    args: [],
+    enabled: !!selectedToken,
+  });
+
   useEffect(() => {
     const fetchBalances = async () => {
       if (!reserves || !address || !publicClient) return;
@@ -92,18 +102,11 @@ export default function AaveWithdraw() {
   const [form] = Form.useForm();
 
   const onSubmit = async (values: WithdrawFormValues) => {
-    if (!address || !selectedSafe) {
-        throw new Error("Account not connected");
+    if (!address || !selectedSafe || !withdrawDecimals) {
+      throw new Error("Account not connected or token decimals not available");
     }
 
-    const { data: withdrawDecimals } = useReadContract({
-      abi: erc20Abi,
-      address: values.withdrawAddress,
-      functionName: "decimals",
-      args: [],
-    }) as { data: number };
-    
-    const { aaveWithdrawTx } = aaveWithdraw(values, address, selectedSafe, withdrawDecimals);
+    const { aaveWithdrawTx } = aaveWithdraw(values, address, selectedSafe, Number(withdrawDecimals));
 
     writeContract({
         abi: safeAccountAbi,
@@ -122,6 +125,10 @@ export default function AaveWithdraw() {
             userAddressSignature(address),
         ],
     });
+  };
+
+  const handleTokenChange = (value: string) => {
+    setSelectedToken(value);
   };
 
   return (
@@ -144,7 +151,11 @@ export default function AaveWithdraw() {
             }}
           >
             <Form.Item label="Asset to Withdraw" name="withdrawAddress">
-              <Select placeholder="Select asset" optionLabelProp="label">
+              <Select 
+                placeholder="Select asset" 
+                optionLabelProp="label"
+                onChange={handleTokenChange}
+              >
                 {reserves?.[0]
                   ?.filter((token: ReserveData) => token.isActive)
                   .map((token: ReserveData) => (

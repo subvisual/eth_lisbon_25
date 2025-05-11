@@ -52,6 +52,17 @@ export default function AaveRepay() {
     args: [POOL_ADDRESSES_PROVIDER],
   });
 
+  const [form] = Form.useForm();
+  const [selectedToken, setSelectedToken] = useState<string>("");
+  
+  const { data: repayDecimals } = useReadContract({
+    abi: erc20Abi,
+    address: selectedToken,
+    functionName: "decimals",
+    args: [],
+    enabled: !!selectedToken,
+  });
+
   useEffect(() => {
     const fetchBalances = async () => {
       if (!reserves || !address || !publicClient) return;
@@ -83,21 +94,12 @@ export default function AaveRepay() {
     fetchBalances();
   }, [reserves, address, publicClient]);
 
-  const [form] = Form.useForm();
-
   const onSubmit = async (values: RepayFormValues) => {
-    if (!address || !selectedSafe) {
-      throw new Error("Account not connected");
+    if (!address || !selectedSafe || !repayDecimals) {
+      throw new Error("Account not connected or token decimals not available");
     }
 
-    const { data: repayDecimals } = useReadContract({
-      abi: erc20Abi,
-      address: values.repayAddress,
-      functionName: "decimals",
-      args: [],
-    }) as { data: number };
-
-    const { safeMultiSendData } = aaveRepay(values, address, selectedSafe, repayDecimals);
+    const { safeMultiSendData } = aaveRepay(values, address, selectedSafe, Number(repayDecimals));
 
     writeContract({
       abi: safeAccountAbi,
@@ -116,6 +118,10 @@ export default function AaveRepay() {
         userAddressSignature(address),
       ],
     });
+  };
+
+  const handleTokenChange = (value: string) => {
+    setSelectedToken(value);
   };
 
   return (
@@ -138,7 +144,11 @@ export default function AaveRepay() {
             }}
           >
             <Form.Item label="Asset to Repay" name="repayAddress">
-              <Select placeholder="Select asset" optionLabelProp="label">
+              <Select 
+                placeholder="Select asset" 
+                optionLabelProp="label"
+                onChange={handleTokenChange}
+              >
                 {reserves?.[0]
                   ?.filter((token: ReserveData) => token.isActive)
                   .map((token: ReserveData) => (

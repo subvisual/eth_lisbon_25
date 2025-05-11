@@ -34,7 +34,6 @@ export const aaveRepay = (values: RepayFormValues, accountAddress: string, safeA
 		repayAmount,
 	);
 
-	console.log(aaveRepayTx.data);
 	const safeTxs = [approveTx, aaveRepayTx];
 
 	const encodedSafeMultiSend = encodeMultiSend(safeTxs);

@@ -60,6 +60,16 @@ export default function AaveBorrow() {
     args: [POOL_ADDRESSES_PROVIDER],
   });
 
+  const [selectedToken, setSelectedToken] = useState<string>("");
+  
+  const { data: borrowDecimals } = useReadContract({
+    abi: erc20Abi,
+    address: selectedToken,
+    functionName: "decimals",
+    args: [],
+    enabled: !!selectedToken,
+  });
+
   useEffect(() => {
     const fetchBalances = async () => {
       if (!reserves || !address || !publicClient) return;
@@ -94,18 +104,11 @@ export default function AaveBorrow() {
   const [form] = Form.useForm();
 
   const onSubmit = async (values: BorrowFormValues) => {
-    if (!address || !selectedSafe) {
-        throw new Error("Account not connected");
+    if (!address || !selectedSafe || !borrowDecimals) {
+      throw new Error("Account not connected or token decimals not available");
     }
 
-    const { data: borrowDecimals } = useReadContract({
-      abi: erc20Abi,
-      address: values.borrowAddress,
-      functionName: "decimals",
-      args: [],
-    }) as { data: number };
-
-    const { aaveBorrowTx } = aaveBorrow(values, address, selectedSafe, borrowDecimals);
+    const { aaveBorrowTx } = aaveBorrow(values, address, selectedSafe, Number(borrowDecimals));
 
     writeContract({
         abi: safeAccountAbi,
@@ -124,6 +127,10 @@ export default function AaveBorrow() {
             userAddressSignature(address),
         ],
     });
+  };
+
+  const handleTokenChange = (value: string) => {
+    setSelectedToken(value);
   };
 
   return (
@@ -146,7 +153,11 @@ export default function AaveBorrow() {
             }}
           >
             <Form.Item label="Asset to Borrow" name="borrowAddress">
-              <Select placeholder="Select asset" optionLabelProp="label">
+              <Select 
+                placeholder="Select asset" 
+                optionLabelProp="label"
+                onChange={handleTokenChange}
+              >
                 {reserves?.[0]
                   ?.filter((token: ReserveData) => token.isActive)
                   .map((token: ReserveData) => (

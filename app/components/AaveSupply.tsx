@@ -35,7 +35,7 @@ export interface ReserveData {
   isActive: boolean;
 }
 
-export default function AaveRepay() {
+export default function AaveSupply() {
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient();
   const { writeContract } = useWriteContract();
@@ -43,12 +43,21 @@ export default function AaveRepay() {
     [address: string]: bigint;
   }>({});
   const { selectedSafe } = useSafe();
-
+  const [selectedToken, setSelectedToken] = useState<string>("");
+  
   const { data: reserves } = useReadContract({
     abi: uiPoolDataProviderAbi,
     address: "0x5598BbFA2f4fE8151f45bBA0a3edE1b54B51a0a9",
     functionName: "getReservesData",
     args: [POOL_ADDRESSES_PROVIDER],
+  });
+
+  const { data: supplyDecimals } = useReadContract({
+    abi: erc20Abi,
+    address: selectedToken,
+    functionName: "decimals",
+    args: [],
+    enabled: !!selectedToken,
   });
 
   useEffect(() => {
@@ -85,18 +94,11 @@ export default function AaveRepay() {
   const [form] = Form.useForm();
 
   const onSubmit = async (values: SupplyFormValues) => {
-    if (!address || !selectedSafe) {
-      throw new Error("Account not connected");
+    if (!address || !selectedSafe || !supplyDecimals) {
+      throw new Error("Account not connected or token decimals not available");
     }
 
-    const { data: supplyDecimals } = useReadContract({
-      abi: erc20Abi,
-      address: values.supplyAddress,
-      functionName: "decimals",
-      args: [],
-    }) as { data: number };
-
-    const { safeMultiSendData } = aaveSupply(values, address, selectedSafe, supplyDecimals);
+    const { safeMultiSendData } = aaveSupply(values, address, selectedSafe, Number(supplyDecimals));
 
     writeContract({
       abi: safeAccountAbi,
@@ -115,6 +117,10 @@ export default function AaveRepay() {
         userAddressSignature(address),
       ],
     });
+  };
+
+  const handleTokenChange = (value: string) => {
+    setSelectedToken(value);
   };
 
   return (
@@ -137,7 +143,11 @@ export default function AaveRepay() {
             }}
           >
             <Form.Item label="Asset to Supply" name="supplyAddress">
-              <Select placeholder="Select asset" optionLabelProp="label">
+              <Select 
+                placeholder="Select asset" 
+                optionLabelProp="label"
+                onChange={handleTokenChange}
+              >
                 {reserves?.[0]
                   ?.filter((token: ReserveData) => token.isActive)
                   .map((token: ReserveData) => (
