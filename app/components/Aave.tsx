@@ -101,34 +101,34 @@ export default function Aave() {
 
   const onSubmit = async (values: FormValues) => {
     if (!address) {
-        throw new Error("Account not connected");
+      throw new Error("Account not connected");
     }
 
     writeContract({
-        abi: erc20Abi,
-        address: values.supplyAddress,
-        functionName: "approve",
-        args: [addresses.safeAddress, BigInt(values.supplyAmount * 10 ** 18)],
+      abi: erc20Abi,
+      address: values.supplyAddress,
+      functionName: "approve",
+      args: [addresses.safeAddress, BigInt(values.supplyAmount * 10 ** 18)],
     });
 
     const { safeMultiSendData } = aaveSupplyBorrowBatch(values, address);
 
     writeContract({
-        abi: safeAccountAbi,
-        address: addresses.safeAddress,
-        functionName: "execTransaction",
-        args: [
-            addresses.multiSendAddress,
-            BigInt(0),
-            safeMultiSendData,
-            1,
-            BigInt(0),
-            BigInt(0),
-            BigInt(0),
-            addresses.nullAddress,
-            addresses.nullAddress,
-            addresses.userAddressSignature,
-        ],
+      abi: safeAccountAbi,
+      address: addresses.safeAddress,
+      functionName: "execTransaction",
+      args: [
+        addresses.multiSendAddress,
+        BigInt(0),
+        safeMultiSendData,
+        1,
+        BigInt(0),
+        BigInt(0),
+        BigInt(0),
+        addresses.nullAddress,
+        addresses.nullAddress,
+        addresses.userAddressSignature,
+      ],
     });
   };
 
