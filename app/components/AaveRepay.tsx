@@ -38,7 +38,7 @@ export interface FormValues {
   borrowAmount: number;
 }
 
-export default function Aave() {
+export default function AaveRepay() {
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient();
   const { writeContract } = useWriteContract();
@@ -52,13 +52,6 @@ export default function Aave() {
     functionName: "getReservesData",
     args: [POOL_ADDRESSES_PROVIDER],
   });
-
-  // const { data: userReserves } = useReadContract({
-  //   abi: uiPoolDataProviderAbi,
-  //   address: "0x69529987FA4A075D0C00B0128fa848dc9ebbE9CE",
-  //   functionName: "getUserReservesData",
-  //   args: [POOL_ADDRESSES_PROVIDER, address],
-  // });
 
   useEffect(() => {
     const fetchBalances = async () => {
@@ -138,28 +131,7 @@ export default function Aave() {
   };
 
   return (
-    <Layout style={{ minHeight: "100vh", background: "#fafafa" }}>
-      <Header
-        style={{
-          background: "#fff",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "16px 24px",
-        }}
-      >
-        <Title
-          level={3}
-          style={{
-            margin: 0,
-            fontFamily: "Poppins, sans-serif",
-            textAlign: "center",
-          }}
-        >
-          Aave V3 on Gnosis Chain
-        </Title>
-      </Header>
-
+    <Layout style={{ minHeight: "500px", background: "#fafafa" }}>
       <Content
         style={{
           display: "flex",
@@ -167,7 +139,7 @@ export default function Aave() {
           alignItems: "center",
         }}
       >
-        <Card title="Supply & Borrow" style={{ maxWidth: 450, flex: 1 }}>
+        <Card title="Repay" style={{ maxWidth: 450, flex: 1 }}>
           <Form
             layout="vertical"
             form={form}
@@ -180,7 +152,7 @@ export default function Aave() {
           >
             <Title level={5}>Supply</Title>
 
-            <Form.Item label="Asset to Supply" name="supplyAddress">
+            <Form.Item label="Asset to Repay" name="supplyAddress">
               <Select placeholder="Select asset" optionLabelProp="label">
                 {reserves &&
                   reserves[0]
@@ -211,49 +183,18 @@ export default function Aave() {
             </Form.Item>
 
             <Form.Item
-              label="Amount to Supply"
-              name="supplyAmount"
+              label="Amount to repay"
+              name="repayAmount"
               rules={[
                 {
                   required: true,
-                  message: "Please input the amount to supply",
+                  message: "Please input the amount to repay",
                 },
               ]}
             >
               <Space direction="vertical" style={{ width: "100%" }}>
                 <InputNumber min={0} style={{ width: "100%" }} />
               </Space>
-            </Form.Item>
-
-            <Title level={5}>Borrow</Title>
-
-            <Form.Item label="Asset to Borrow" name="borrowAddress">
-              <Select placeholder="Select asset">
-                {reserves &&
-                  reserves[0]
-                    .filter((token) => token.isActive && token.borrowingEnabled)
-                    .map((token) => (
-                      <Option
-                        key={token.underlyingAsset}
-                        value={token.underlyingAsset}
-                      >
-                        {token.symbol}
-                      </Option>
-                    ))}
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              label="Amount to Borrow"
-              name="borrowAmount"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input the amount to borrow",
-                },
-              ]}
-            >
-              <InputNumber min={0} style={{ width: "100%" }} />
             </Form.Item>
 
             <Form.Item>
