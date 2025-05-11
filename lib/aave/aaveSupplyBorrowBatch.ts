@@ -10,12 +10,10 @@ import {
 } from "./transactionsBuilder";
 import type { FormValues } from "@/app/components/Aave";
 
-export const aaveSupplyBorrowBatch = (values: FormValues, accountAddress: string, safeAddress: string) => {
+export const aaveSupplyBorrowBatch = (values: FormValues, accountAddress: string, safeAddress: string, supplyDecimals: number, borrowDecimals: number) => {
 	const aavePoolV3Address = addresses.aavePoolV3Address;
 	const supplyTokenAddress = values.supplyAddress;
-	const supplyTokenDecimals = 18;
 	const borrowTokenAddress = values.borrowAddress;
-	const borrowTokenDecimals = 6;
 
 	if (!accountAddress) {
 		throw new Error("Account not found");
@@ -23,11 +21,11 @@ export const aaveSupplyBorrowBatch = (values: FormValues, accountAddress: string
 
 	const supplyAmount = (
 		values.supplyAmount *
-		10 ** supplyTokenDecimals
+		10 ** supplyDecimals
 	).toString();
 	const borrowAmount = (
 		values.borrowAmount *
-		10 ** borrowTokenDecimals
+		10 ** borrowDecimals
 	).toString();
 
     const approveTx = approveErc20TxBuilder(

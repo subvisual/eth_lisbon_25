@@ -4,10 +4,9 @@ import {
 } from "./transactionsBuilder";
 import type { BorrowFormValues } from "@/app/components/AaveBorrow";
 
-export const aaveBorrow = (values: BorrowFormValues, accountAddress: string, safeAddress: string) => {
+export const aaveBorrow = (values: BorrowFormValues, accountAddress: string, safeAddress: string, borrowDecimals: number) => {
 	const aavePoolV3Address = addresses.aavePoolV3Address;
 	const borrowTokenAddress = values.borrowAddress;
-	const borrowTokenDecimals = 6;
 
 	if (!accountAddress) {
 		throw new Error("Account not found");
@@ -15,7 +14,7 @@ export const aaveBorrow = (values: BorrowFormValues, accountAddress: string, saf
 
 	const borrowAmount = (
 		values.borrowAmount *
-		10 ** borrowTokenDecimals
+		10 ** borrowDecimals
 	).toString();
 
 	const aaveBorrowTx = aaveBorrowTxBuilder(

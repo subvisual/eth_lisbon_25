@@ -98,7 +98,14 @@ export default function AaveBorrow() {
         throw new Error("Account not connected");
     }
 
-    const { aaveBorrowTx } = aaveBorrow(values, address, selectedSafe);
+    const { data: borrowDecimals } = useReadContract({
+      abi: erc20Abi,
+      address: values.borrowAddress,
+      functionName: "decimals",
+      args: [],
+    }) as { data: number };
+
+    const { aaveBorrowTx } = aaveBorrow(values, address, selectedSafe, borrowDecimals);
 
     writeContract({
         abi: safeAccountAbi,

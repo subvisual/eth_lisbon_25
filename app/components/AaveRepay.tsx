@@ -90,7 +90,14 @@ export default function AaveRepay() {
       throw new Error("Account not connected");
     }
 
-    const { safeMultiSendData } = aaveRepay(values, address, selectedSafe);
+    const { data: repayDecimals } = useReadContract({
+      abi: erc20Abi,
+      address: values.repayAddress,
+      functionName: "decimals",
+      args: [],
+    }) as { data: number };
+
+    const { safeMultiSendData } = aaveRepay(values, address, selectedSafe, repayDecimals);
 
     writeContract({
       abi: safeAccountAbi,

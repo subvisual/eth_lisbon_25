@@ -96,7 +96,14 @@ export default function AaveWithdraw() {
         throw new Error("Account not connected");
     }
 
-    const { aaveWithdrawTx } = aaveWithdraw(values, address, selectedSafe);
+    const { data: withdrawDecimals } = useReadContract({
+      abi: erc20Abi,
+      address: values.withdrawAddress,
+      functionName: "decimals",
+      args: [],
+    }) as { data: number };
+    
+    const { aaveWithdrawTx } = aaveWithdraw(values, address, selectedSafe, withdrawDecimals);
 
     writeContract({
         abi: safeAccountAbi,

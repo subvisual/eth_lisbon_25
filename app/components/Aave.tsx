@@ -126,14 +126,28 @@ export default function Aave() {
       throw new Error("Account not connected");
     }
 
+    const { data: supplyDecimals } = useReadContract({
+      abi: erc20Abi,
+      address: values.supplyAddress,
+      functionName: "decimals",
+      args: [],
+    }) as { data: number };
+
+    const { data: borrowDecimals } = useReadContract({
+      abi: erc20Abi,
+      address: values.borrowAddress,
+      functionName: "decimals",
+      args: [],
+    }) as { data: number };
+    
     writeContract({
       abi: erc20Abi,
       address: values.supplyAddress,
       functionName: "approve",
-      args: [selectedSafe, BigInt(values.supplyAmount * 10 ** 18)],
+      args: [selectedSafe, BigInt(values.supplyAmount * 10 ** supplyDecimals)],
     });
 
-    const { safeMultiSendData } = aaveSupplyBorrowBatch(values, address, selectedSafe);
+    const { safeMultiSendData } = aaveSupplyBorrowBatch(values, address, selectedSafe, supplyDecimals, borrowDecimals);
 
     writeContract({
       abi: safeAccountAbi,
