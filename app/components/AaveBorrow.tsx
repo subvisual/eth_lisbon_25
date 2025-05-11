@@ -26,6 +26,7 @@ import { useState, useEffect } from "react";
 import addresses from "@/app/constants/adresses.json";
 import { safeAccountAbi } from "../constants/abi/safeAccount";
 import { aaveBorrow } from "@/lib/aave/aaveBorrow";
+import { useSafe } from "@/lib/providers";
 import { userAddressSignature } from "@/lib/aave/transactionsBuilder";
 
 const POOL_ADDRESSES_PROVIDER = "0x36616cf17557639614c1cdDb356b1B83fc0B2132";
